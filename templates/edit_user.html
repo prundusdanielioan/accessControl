@@ -54,21 +54,7 @@
             </div>
         </div>
 
-        <form method="POST" action="/user/{{ user['id'] }}/edit">
-            <label class="block text-slate-400 mb-2">Extend Subscription</label>
-            <div class="flex gap-2">
-                <select name="extend_days"
-                    class="flex-grow bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
-                    <option value="7">Add 1 Week (+7 days)</option>
-                    <option value="30">Add 1 Month (+30 days)</option>
-                    <option value="365">Add 1 Year (+365 days)</option>
-                </select>
-                <button type="submit"
-                    class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-lg transition duration-200">
-                    Add
-                </button>
-            </div>
-        </form>
+
 
         {% else %}
         <div class="p-8 text-center text-slate-500 bg-slate-900 rounded-lg border border-dashed border-slate-700">
