@@ -3,9 +3,12 @@ import database
 import datetime
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///access_control.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize DB
-database.init_db()
+database.db.init_app(app)
+database.init_db(app)
 
 @app.route('/')
 def index():
@@ -61,9 +64,7 @@ def register():
              return render_template('register.html', error="Error creating user (Phone might use used).")
 
     # Get subscription types for dropdown
-    conn = database.get_db_connection()
-    sub_types = conn.execute('SELECT * FROM subscription_types').fetchall()
-    conn.close()
+    sub_types = database.SubscriptionType.query.all()
     
     rfid_prefill = request.args.get('rfid', '')
     
@@ -98,14 +99,20 @@ def delete_user(user_id):
 
 @app.route('/admin')
 def admin():
-    conn = database.get_db_connection()
-    logs = conn.execute('''
-        SELECT l.*, u.name 
-        FROM access_logs l
-        JOIN users u ON l.user_id = u.id
-        ORDER BY l.timestamp DESC LIMIT 50
-    ''').fetchall()
-    conn.close()
+    logs_data = database.db.session.query(database.AccessLog, database.User.name)\
+        .join(database.User, database.AccessLog.user_id == database.User.id)\
+        .order_by(database.AccessLog.timestamp.desc())\
+        .limit(50).all()
+        
+    logs = []
+    for log, name in logs_data:
+        l_dict = database.dict_helper(log)
+        l_dict['name'] = name
+        # Convert timestamp to string for Jinja
+        if hasattr(l_dict['timestamp'], 'strftime'):
+            l_dict['timestamp'] = l_dict['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
+        logs.append(l_dict)
+        
     return render_template('admin.html', logs=logs)
 
 @app.route('/admin/log/<int:log_id>/delete', methods=['POST'])
