@@ -94,7 +94,7 @@
         statusBox.className = `w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl p-12 text-center border-4 border-${color}-500 transition-colors duration-300`;
         statusTitle.className = `text-5xl font-black text-${color}-500 mb-4`;
         statusTitle.textContent = title;
-        statusMessage.textContent = message;
+        statusMessage.innerHTML = message;
         statusMessage.className = `text-2xl text-${color}-400`;
 
         // Dynamic background tint
