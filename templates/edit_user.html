@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- Edit Details Column -->
+    <div class="bg-slate-800 rounded-lg shadow-xl p-8 border border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 text-emerald-400">Edit Details</h2>
+
+        <form method="POST" action="/user/{{ user['id'] }}/edit" class="space-y-4">
+            <div>
+                <label class="block text-slate-400 mb-2">Full Name</label>
+                <input type="text" name="name" value="{{ user['name'] }}" required
+                    class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+            </div>
+
+            <div>
+                <label class="block text-slate-400 mb-2">Phone Number</label>
+                <input type="tel" name="phone" value="{{ user['phone'] }}" required
+                    class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+            </div>
+
+            <div>
+                <label class="block text-slate-400 mb-2">RFID Tag</label>
+                <input type="text" name="rfid_tag" value="{{ user['rfid_tag'] }}" required
+                    class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition font-mono text-yellow-500">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition duration-200 mt-4">
+                Update Details
+            </button>
+        </form>
+    </div>
+
+    <!-- Subscription Management Column -->
+    <div class="bg-slate-800 rounded-lg shadow-xl p-8 border border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 text-emerald-400">Subscription</h2>
+
+        {% if sub %}
+        <div class="mb-6 p-4 bg-slate-900 rounded-lg border border-slate-700">
+            <p class="text-slate-400 text-sm">Current Plan</p>
+            <p class="text-xl font-bold text-white">{{ sub['type_name'] }}</p>
+
+            <div class="mt-4 flex justify-between text-sm">
+                <div>
+                    <p class="text-slate-500">Starts</p>
+                    <p class="text-slate-300">{{ sub['start_date'] }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-slate-500">Ends</p>
+                    <p class="text-emerald-400 font-bold">{{ sub['end_date'] }}</p>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" action="/user/{{ user['id'] }}/edit">
+            <label class="block text-slate-400 mb-2">Extend Subscription</label>
+            <div class="flex gap-2">
+                <select name="extend_days"
+                    class="flex-grow bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+                    <option value="7">Add 1 Week (+7 days)</option>
+                    <option value="30">Add 1 Month (+30 days)</option>
+                    <option value="365">Add 1 Year (+365 days)</option>
+                </select>
+                <button type="submit"
+                    class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-lg transition duration-200">
+                    Add
+                </button>
+            </div>
+        </form>
+
+        {% else %}
+        <div class="p-8 text-center text-slate-500 bg-slate-900 rounded-lg border border-dashed border-slate-700">
+            No active subscription found.
+        </div>
+        <div class="mt-4 text-center">
+            <p class="text-sm text-slate-400">To add a new subscription, please use the Register page (or we can add
+                manual add logic later).</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

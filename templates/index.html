@@ -1,0 +1,115 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center h-[calc(100vh-10rem)]">
+
+    <!-- Status Display -->
+    <div id="status-box"
+        class="w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl p-12 text-center border-4 border-slate-700 transition-colors duration-300">
+        <h1 id="status-title" class="text-6xl font-black text-slate-500 mb-4">READY</h1>
+        <p id="status-message" class="text-2xl text-slate-400">Scan card to verify access</p>
+    </div>
+
+    <!-- Hidden Input for RFID Reader (acts as keyboard) -->
+    <div class="mt-8 w-full max-w-md">
+        <input type="text" id="rfid-input" autofocus autocomplete="off"
+            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white text-center text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent opacity-50 hover:opacity-100 transition"
+            placeholder="Click here and scan card...">
+        <p class="text-slate-500 text-sm text-center mt-2">Make sure this input is focused when scanning.</p>
+    </div>
+
+</div>
+
+<script>
+    const input = document.getElementById('rfid-input');
+    const statusBox = document.getElementById('status-box');
+    const statusTitle = document.getElementById('status-title');
+    const statusMessage = document.getElementById('status-message');
+
+    // Keep focus
+    document.addEventListener('click', () => input.focus());
+
+    // Handle Enter key (RFID readers usually send Enter at the end)
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            const rfid = input.value;
+            if (rfid) {
+                processScan(rfid);
+                input.value = '';
+            }
+        }
+    });
+
+    async function processScan(rfid) {
+        // Reset state temporarily
+        updateStatus('PROCESSING', 'Checking database...', 'slate');
+
+        try {
+            const response = await fetch('/api/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rfid_tag: rfid })
+            });
+            const data = await response.json();
+
+            const pkgInfo = data.sub_name ? ` [${data.sub_name}]` : '';
+            const countInfo = data.weekly_count !== undefined ? ` (This week: ${data.weekly_count} scans)` : '';
+
+            if (data.status === 'allowed') {
+                updateStatus('ACCESS GRANTED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}`, 'emerald');
+                playAudio('success');
+            } else if (data.status === 'warning') {
+                updateStatus('ACCESS GRANTED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}`, 'yellow');
+                playAudio('warning');
+            } else if (data.status === 'denied') {
+                updateStatus('ACCESS DENIED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}`, 'red');
+                playAudio('error');
+            } else if (data.status === 'unknown') {
+                updateStatus('UNKNOWN USER', `Card: ${rfid}`, 'amber');
+                // Optional: Redirect to register after delay
+                setTimeout(() => {
+                    if (confirm(`User not found. Register card ${rfid}?`)) {
+                        window.location.href = `/register?rfid=${rfid}`;
+                    }
+                }, 500);
+            }
+        } catch (error) {
+            console.error(error);
+            updateStatus('ERROR', 'System error occurred', 'red');
+        }
+
+        // Reset after 3 seconds
+        setTimeout(() => {
+            resetStatus();
+        }, 3000);
+    }
+
+    function updateStatus(title, message, color) {
+        statusBox.className = `w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl p-12 text-center border-4 border-${color}-500 transition-colors duration-300`;
+        statusTitle.className = `text-5xl font-black text-${color}-500 mb-4`;
+        statusTitle.textContent = title;
+        statusMessage.textContent = message;
+        statusMessage.className = `text-2xl text-${color}-400`;
+
+        // Dynamic background tint
+        if (color === 'emerald') statusBox.classList.add('bg-emerald-900/20');
+        if (color === 'red') statusBox.classList.add('bg-red-900/20');
+        if (color === 'amber') statusBox.classList.add('bg-amber-900/20');
+        if (color === 'yellow') statusBox.classList.add('bg-yellow-900/20');
+    }
+
+    function resetStatus() {
+        statusBox.className = "w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl p-12 text-center border-4 border-slate-700 transition-colors duration-300";
+        statusTitle.className = "text-6xl font-black text-slate-500 mb-4";
+        statusTitle.textContent = "READY";
+        statusMessage.textContent = "Scan card to verify access";
+        statusMessage.className = "text-2xl text-slate-400";
+    }
+
+    // Optional: Simulation of audio beeps
+    function playAudio(type) {
+        // In a real app, use Audio() object here
+        console.log(`Playing ${type} sound`);
+    }
+</script>
+{% endblock %}

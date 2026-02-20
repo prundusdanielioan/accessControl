@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-slate-800 rounded-lg shadow-xl p-8 border border-slate-700">
+    <h1 class="text-3xl font-bold mb-8 text-emerald-400">Register New User</h1>
+
+    {% if error %}
+    <div class="bg-red-500/10 border border-red-500 text-red-400 p-4 rounded-lg mb-6">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/register" class="space-y-6">
+        <div>
+            <label class="block text-slate-400 mb-2">Full Name</label>
+            <input type="text" name="name" required
+                class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+        </div>
+
+        <div>
+            <label class="block text-slate-400 mb-2">Phone Number</label>
+            <input type="tel" name="phone" required
+                class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+        </div>
+
+        <div>
+            <label class="block text-slate-400 mb-2">RFID Tag (Scan Card)</label>
+            <input type="text" name="rfid_tag" value="{{ rfid_prefill }}" required autofocus
+                class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition font-mono text-yellow-500">
+            <p class="text-xs text-slate-500 mt-1">Click the field and scan the card.</p>
+        </div>
+
+        <div>
+            <label class="block text-slate-400 mb-2">Select Subscription</label>
+            <select name="subscription_type"
+                class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+                {% for sub in sub_types %}
+                <option value="{{ sub['id'] }}">
+                    {{ sub['name'] }}
+                    {% if sub['entries_per_week'] %}
+                    ({{ sub['entries_per_week'] }} entries/week)
+                    {% else %}
+                    (Unlimited)
+                    {% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit"
+            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-lg transition duration-200 mt-4">
+            Create User & Assign Subscription
+        </button>
+    </form>
+</div>
+{% endblock %}
