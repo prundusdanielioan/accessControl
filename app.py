@@ -33,6 +33,9 @@ def scan_rfid():
     # we should include the current scan in the count for UI feedback.
     display_count = weekly_count + 1 if allowed else weekly_count
     
+    # Fetch the previously recorded attempt before saving this new one
+    last_log = database.get_last_log(user['id'])
+    
     database.log_access(user['id'], allowed, message)
     
     return jsonify({
@@ -40,7 +43,8 @@ def scan_rfid():
         'user_name': user['name'],
         'message': message,
         'sub_name': sub_name,
-        'weekly_count': display_count
+        'weekly_count': display_count,
+        'last_attempt': last_log
     })
 
 @app.route('/register', methods=['GET', 'POST'])

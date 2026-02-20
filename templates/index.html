@@ -55,14 +55,20 @@
             const pkgInfo = data.sub_name ? ` [${data.sub_name}]` : '';
             const countInfo = data.weekly_count !== undefined ? ` (This week: ${data.weekly_count} scans)` : '';
 
+            let lastAttemptInfo = '';
+            if (data.last_attempt) {
+                const statusStr = data.last_attempt.allowed ? 'Allowed' : `Denied (${data.last_attempt.reason})`;
+                lastAttemptInfo = `<br><span class="text-xs font-normal opacity-80 mt-2 block tracking-wider uppercase">Last Attempt: ${data.last_attempt.timestamp} - ${statusStr}</span>`;
+            }
+
             if (data.status === 'allowed') {
-                updateStatus('ACCESS GRANTED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}`, 'emerald');
+                updateStatus('ACCESS GRANTED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'emerald');
                 playAudio('success');
             } else if (data.status === 'warning') {
-                updateStatus('ACCESS GRANTED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}`, 'yellow');
+                updateStatus('ACCESS GRANTED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'yellow');
                 playAudio('warning');
             } else if (data.status === 'denied') {
-                updateStatus('ACCESS DENIED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}`, 'red');
+                updateStatus('ACCESS DENIED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'red');
                 playAudio('error');
             } else if (data.status === 'unknown') {
                 updateStatus('UNKNOWN USER', `Card: ${rfid}`, 'amber');

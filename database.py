@@ -212,3 +212,16 @@ def delete_log(log_id):
         print(f"Error deleting log: {e}")
         db.session.rollback()
         return False
+
+def get_last_log(user_id):
+    try:
+        log = AccessLog.query.filter_by(user_id=user_id).order_by(AccessLog.timestamp.desc()).first()
+        if log:
+            l_dict = dict_helper(log)
+            # Format timestamp safely
+            if hasattr(l_dict['timestamp'], 'strftime'):
+                l_dict['timestamp'] = l_dict['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
+            return l_dict
+    except Exception as e:
+        print(f"Error fetching last log: {e}")
+    return None
