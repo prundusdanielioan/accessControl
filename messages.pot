@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-02-22 20:34+0200\n"
+"POT-Creation-Date: 2026-02-22 21:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,24 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: database.py:116 templates/edit_user.html:61
+msgid "No active subscription found."
+msgstr ""
+
+#: database.py:123
+#, python-format
+msgid "Weekly limit reached (%(count)s/%(total)s)."
+msgstr ""
+
+#: database.py:128
+#, python-format
+msgid "Access Granted. Expires in %(days)s days (%(date)s)"
+msgstr ""
+
+#: database.py:130
+msgid "Access Granted"
+msgstr ""
 
 #: templates/admin.html:5
 msgid "Access Logs"
@@ -99,12 +117,80 @@ msgstr ""
 msgid "Ends"
 msgstr ""
 
-#: templates/edit_user.html:61
-msgid "No active subscription found."
-msgstr ""
-
 #: templates/edit_user.html:64
 msgid "To add a new subscription, please use the Register page."
+msgstr ""
+
+#: templates/index.html:9 templates/index.html:110
+msgid "READY"
+msgstr ""
+
+#: templates/index.html:10 templates/index.html:111
+msgid "Scan card to verify access"
+msgstr ""
+
+#: templates/index.html:17
+msgid "Click here and scan card..."
+msgstr ""
+
+#: templates/index.html:18
+msgid "Make sure this input is focused when scanning."
+msgstr ""
+
+#: templates/index.html:45
+msgid "PROCESSING"
+msgstr ""
+
+#: templates/index.html:45
+msgid "Checking database..."
+msgstr ""
+
+#: templates/index.html:56
+msgid "This week:"
+msgstr ""
+
+#: templates/index.html:56
+msgid "scans"
+msgstr ""
+
+#: templates/index.html:60
+msgid "Allowed"
+msgstr ""
+
+#: templates/index.html:60
+msgid "Denied"
+msgstr ""
+
+#: templates/index.html:61
+msgid "Last Attempt:"
+msgstr ""
+
+#: templates/index.html:65 templates/index.html:68
+msgid "ACCESS GRANTED"
+msgstr ""
+
+#: templates/index.html:71
+msgid "ACCESS DENIED"
+msgstr ""
+
+#: templates/index.html:74
+msgid "UNKNOWN USER"
+msgstr ""
+
+#: templates/index.html:74
+msgid "Card:"
+msgstr ""
+
+#: templates/index.html:77
+msgid "User not found. Register card"
+msgstr ""
+
+#: templates/index.html:84
+msgid "ERROR"
+msgstr ""
+
+#: templates/index.html:84
+msgid "System error occurred"
 msgstr ""
 
 #: templates/layout.html:30

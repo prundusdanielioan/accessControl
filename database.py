@@ -1,5 +1,6 @@
 import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_babel import gettext as _
 
 db = SQLAlchemy()
 
@@ -112,21 +113,21 @@ def check_access(user_id):
         .count()
 
     if not subscription_data:
-        return False, "No active subscription found.", "denied", None, count
+        return False, _("No active subscription found."), "denied", None, count
         
     sub, sub_type = subscription_data
     sub_name = sub_type.name
 
     if sub_type.entries_per_week:
         if count >= sub_type.entries_per_week:
-            return False, f"Weekly limit reached ({count}/{sub_type.entries_per_week}).", "denied", sub_name, count
+            return False, _("Weekly limit reached (%(count)s/%(total)s).", count=count, total=sub_type.entries_per_week), "denied", sub_name, count
 
     days_left = (sub.end_date - today).days
     
     if days_left <= 7:
-        return True, f"Access Granted. Expires in {days_left} days ({sub.end_date})", "warning", sub_name, count
+        return True, _("Access Granted. Expires in %(days)s days (%(date)s)", days=days_left, date=sub.end_date), "warning", sub_name, count
 
-    return True, "Access Granted", "allowed", sub_name, count
+    return True, _("Access Granted"), "allowed", sub_name, count
 
 def get_all_users():
     results = db.session.query(User, ActiveSubscription.end_date, SubscriptionType.name.label('sub_name'))\

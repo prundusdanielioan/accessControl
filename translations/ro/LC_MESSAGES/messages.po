@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-02-22 20:34+0200\n"
+"POT-Creation-Date: 2026-02-22 21:03+0200\n"
 "PO-Revision-Date: 2026-02-22 20:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ro\n"
@@ -18,6 +18,24 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: database.py:116 templates/edit_user.html:61
+msgid "No active subscription found."
+msgstr "Nu s-a găsit niciun abonament activ."
+
+#: database.py:123
+#, python-format
+msgid "Weekly limit reached (%(count)s/%(total)s)."
+msgstr "Limita săptămânală a fost atinsă (%(count)s/%(total)s)."
+
+#: database.py:128
+#, python-format
+msgid "Access Granted. Expires in %(days)s days (%(date)s)"
+msgstr "Acces permis. Expiră în %(days)s zile (%(date)s)"
+
+#: database.py:130
+msgid "Access Granted"
+msgstr "Acces permis"
 
 #: templates/admin.html:5
 msgid "Access Logs"
@@ -55,7 +73,9 @@ msgstr "RESPINS"
 msgid ""
 "Are you sure you want to delete this log entry? This action cannot be "
 "undone."
-msgstr "Sunteți sigur că doriți să ștergeți acest jurnal? Această acțiune nu poate fi anulată."
+msgstr ""
+"Sunteți sigur că doriți să ștergeți acest jurnal? Această acțiune nu "
+"poate fi anulată."
 
 #: templates/admin.html:40 templates/users.html:48
 msgid "Delete"
@@ -101,13 +121,81 @@ msgstr "Începe"
 msgid "Ends"
 msgstr "Se termină"
 
-#: templates/edit_user.html:61
-msgid "No active subscription found."
-msgstr "Nu s-a găsit niciun abonament activ."
-
 #: templates/edit_user.html:64
 msgid "To add a new subscription, please use the Register page."
 msgstr "Pentru a adăuga un abonament nou, folosiți pagina de Înregistrare."
+
+#: templates/index.html:9 templates/index.html:110
+msgid "READY"
+msgstr "PREGĂTIT"
+
+#: templates/index.html:10 templates/index.html:111
+msgid "Scan card to verify access"
+msgstr "Scanați cardul pentru a verifica accesul"
+
+#: templates/index.html:17
+msgid "Click here and scan card..."
+msgstr "Faceți clic aici și scanați cardul..."
+
+#: templates/index.html:18
+msgid "Make sure this input is focused when scanning."
+msgstr "Asigurați-vă că acest câmp este selectat când scanați."
+
+#: templates/index.html:45
+msgid "PROCESSING"
+msgstr "PROCESARE"
+
+#: templates/index.html:45
+msgid "Checking database..."
+msgstr "Se verifică baza de date..."
+
+#: templates/index.html:56
+msgid "This week:"
+msgstr "Săptămâna aceasta:"
+
+#: templates/index.html:56
+msgid "scans"
+msgstr "scanări"
+
+#: templates/index.html:60
+msgid "Allowed"
+msgstr "Permis"
+
+#: templates/index.html:60
+msgid "Denied"
+msgstr "Respins"
+
+#: templates/index.html:61
+msgid "Last Attempt:"
+msgstr "Ultima încercare:"
+
+#: templates/index.html:65 templates/index.html:68
+msgid "ACCESS GRANTED"
+msgstr "ACCES PERMIS"
+
+#: templates/index.html:71
+msgid "ACCESS DENIED"
+msgstr "ACCES RESPINS"
+
+#: templates/index.html:74
+msgid "UNKNOWN USER"
+msgstr "UTILIZATOR NECUNOSCUT"
+
+#: templates/index.html:74
+msgid "Card:"
+msgstr "Card:"
+
+#: templates/index.html:77
+msgid "User not found. Register card"
+msgstr "Utilizator negăsit. Înregistrați cardul"
+
+#: templates/index.html:84
+msgid "ERROR"
+msgstr "EROARE"
+
+#: templates/index.html:84
+msgid "System error occurred"
+msgstr "A apărut o eroare de sistem"
 
 #: templates/layout.html:30
 msgid "Scanner"
@@ -183,7 +271,9 @@ msgstr "Editează"
 
 #: templates/users.html:45
 msgid "Are you sure you want to delete this user? This action cannot be undone."
-msgstr "Sunteți sigur că doriți să ștergeți acest utilizator? Această acțiune nu poate fi anulată."
+msgstr ""
+"Sunteți sigur că doriți să ștergeți acest utilizator? Această acțiune nu "
+"poate fi anulată."
 
 #: templates/users.html:55
 msgid "No users found."

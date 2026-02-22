@@ -6,16 +6,16 @@
     <!-- Status Display -->
     <div id="status-box"
         class="w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl p-12 text-center border-4 border-slate-700 transition-colors duration-300">
-        <h1 id="status-title" class="text-6xl font-black text-slate-500 mb-4">READY</h1>
-        <p id="status-message" class="text-2xl text-slate-400">Scan card to verify access</p>
+        <h1 id="status-title" class="text-6xl font-black text-slate-500 mb-4">{{ _('READY') }}</h1>
+        <p id="status-message" class="text-2xl text-slate-400">{{ _('Scan card to verify access') }}</p>
     </div>
 
     <!-- Hidden Input for RFID Reader (acts as keyboard) -->
     <div class="mt-8 w-full max-w-md">
         <input type="text" id="rfid-input" autofocus autocomplete="off"
             class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white text-center text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent opacity-50 hover:opacity-100 transition"
-            placeholder="Click here and scan card...">
-        <p class="text-slate-500 text-sm text-center mt-2">Make sure this input is focused when scanning.</p>
+            placeholder="{{ _('Click here and scan card...') }}">
+        <p class="text-slate-500 text-sm text-center mt-2">{{ _('Make sure this input is focused when scanning.') }}</p>
     </div>
 
 </div>
@@ -42,7 +42,7 @@
 
     async function processScan(rfid) {
         // Reset state temporarily
-        updateStatus('PROCESSING', 'Checking database...', 'slate');
+        updateStatus("{{ _('PROCESSING') }}", "{{ _('Checking database...') }}", 'slate');
 
         try {
             const response = await fetch('/api/scan', {
@@ -53,35 +53,35 @@
             const data = await response.json();
 
             const pkgInfo = data.sub_name ? ` [${data.sub_name}]` : '';
-            const countInfo = data.weekly_count !== undefined ? ` (This week: ${data.weekly_count} scans)` : '';
+            const countInfo = data.weekly_count !== undefined ? ` ({{ _('This week:') }} ${data.weekly_count} {{ _('scans') }})` : '';
 
             let lastAttemptInfo = '';
             if (data.last_attempt) {
-                const statusStr = data.last_attempt.allowed ? 'Allowed' : `Denied (${data.last_attempt.reason})`;
-                lastAttemptInfo = `<br><span class="text-xs font-normal opacity-80 mt-2 block tracking-wider uppercase">Last Attempt: ${data.last_attempt.timestamp} - ${statusStr}</span>`;
+                const statusStr = data.last_attempt.allowed ? "{{ _('Allowed') }}" : `{{ _('Denied') }} (${data.last_attempt.reason})`;
+                lastAttemptInfo = `<br><span class="text-xs font-normal opacity-80 mt-2 block tracking-wider uppercase">{{ _('Last Attempt:') }} ${data.last_attempt.timestamp} - ${statusStr}</span>`;
             }
 
             if (data.status === 'allowed') {
-                updateStatus('ACCESS GRANTED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'emerald');
+                updateStatus("{{ _('ACCESS GRANTED') }}", `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'emerald');
                 playAudio('success');
             } else if (data.status === 'warning') {
-                updateStatus('ACCESS GRANTED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'yellow');
+                updateStatus("{{ _('ACCESS GRANTED') }}", `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'yellow');
                 playAudio('warning');
             } else if (data.status === 'denied') {
-                updateStatus('ACCESS DENIED', `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'red');
+                updateStatus("{{ _('ACCESS DENIED') }}", `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'red');
                 playAudio('error');
             } else if (data.status === 'unknown') {
-                updateStatus('UNKNOWN USER', `Card: ${rfid}`, 'amber');
+                updateStatus("{{ _('UNKNOWN USER') }}", `{{ _('Card:') }} ${rfid}`, 'amber');
                 // Optional: Redirect to register after delay
                 setTimeout(() => {
-                    if (confirm(`User not found. Register card ${rfid}?`)) {
+                    if (confirm(`{{ _('User not found. Register card') }} ${rfid}?`)) {
                         window.location.href = `/register?rfid=${rfid}`;
                     }
                 }, 500);
             }
         } catch (error) {
             console.error(error);
-            updateStatus('ERROR', 'System error occurred', 'red');
+            updateStatus("{{ _('ERROR') }}", "{{ _('System error occurred') }}", 'red');
         }
 
         // Reset after 6 seconds
@@ -107,8 +107,8 @@
     function resetStatus() {
         statusBox.className = "w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl p-12 text-center border-4 border-slate-700 transition-colors duration-300";
         statusTitle.className = "text-6xl font-black text-slate-500 mb-4";
-        statusTitle.textContent = "READY";
-        statusMessage.textContent = "Scan card to verify access";
+        statusTitle.textContent = "{{ _('READY') }}";
+        statusMessage.textContent = "{{ _('Scan card to verify access') }}";
         statusMessage.className = "text-2xl text-slate-400";
     }
 
