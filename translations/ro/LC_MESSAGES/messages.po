@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-02-22 20:17+0200\n"
+"POT-Creation-Date: 2026-02-22 20:34+0200\n"
 "PO-Revision-Date: 2026-02-22 20:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ro\n"
@@ -18,6 +18,96 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: templates/admin.html:5
+msgid "Access Logs"
+msgstr "Jurnal de acces"
+
+#: templates/admin.html:11
+msgid "Time"
+msgstr "Timp"
+
+#: templates/admin.html:12
+msgid "User"
+msgstr "Utilizator"
+
+#: templates/admin.html:13
+msgid "Status"
+msgstr "Stare"
+
+#: templates/admin.html:14
+msgid "Message"
+msgstr "Mesaj"
+
+#: templates/admin.html:15 templates/users.html:21
+msgid "Actions"
+msgstr "Acțiuni"
+
+#: templates/admin.html:27
+msgid "ALLOWED"
+msgstr "PERMIS"
+
+#: templates/admin.html:31
+msgid "DENIED"
+msgstr "RESPINS"
+
+#: templates/admin.html:37
+msgid ""
+"Are you sure you want to delete this log entry? This action cannot be "
+"undone."
+msgstr "Sunteți sigur că doriți să ștergeți acest jurnal? Această acțiune nu poate fi anulată."
+
+#: templates/admin.html:40 templates/users.html:48
+msgid "Delete"
+msgstr "Șterge"
+
+#: templates/admin.html:47
+msgid "No logs found."
+msgstr "Niciun jurnal găsit."
+
+#: templates/edit_user.html:8
+msgid "Edit Details"
+msgstr "Editează detaliile"
+
+#: templates/edit_user.html:12 templates/register.html:15
+msgid "Full Name"
+msgstr "Nume complet"
+
+#: templates/edit_user.html:18 templates/register.html:21
+msgid "Phone Number"
+msgstr "Număr de telefon"
+
+#: templates/edit_user.html:24 templates/users.html:18
+msgid "RFID Tag"
+msgstr "Etichetă RFID"
+
+#: templates/edit_user.html:31
+msgid "Update Details"
+msgstr "Actualizează detaliile"
+
+#: templates/edit_user.html:38 templates/users.html:19
+msgid "Subscription"
+msgstr "Abonament"
+
+#: templates/edit_user.html:42
+msgid "Current Plan"
+msgstr "Planul actual"
+
+#: templates/edit_user.html:47
+msgid "Starts"
+msgstr "Începe"
+
+#: templates/edit_user.html:51
+msgid "Ends"
+msgstr "Se termină"
+
+#: templates/edit_user.html:61
+msgid "No active subscription found."
+msgstr "Nu s-a găsit niciun abonament activ."
+
+#: templates/edit_user.html:64
+msgid "To add a new subscription, please use the Register page."
+msgstr "Pentru a adăuga un abonament nou, folosiți pagina de Înregistrare."
 
 #: templates/layout.html:30
 msgid "Scanner"
@@ -34,6 +124,70 @@ msgstr "Înregistrare"
 #: templates/layout.html:33
 msgid "Logs"
 msgstr "Jurnal"
+
+#: templates/register.html:5
+msgid "Register New User"
+msgstr "Înregistrare utilizator nou"
+
+#: templates/register.html:27
+msgid "RFID Tag (Scan Card)"
+msgstr "Etichetă RFID (Scanați cardul)"
+
+#: templates/register.html:30
+msgid "Click the field and scan the card."
+msgstr "Faceți clic pe câmp și scanați cardul."
+
+#: templates/register.html:34
+msgid "Select Subscription"
+msgstr "Selectați abonamentul"
+
+#: templates/register.html:41
+msgid "entries/week"
+msgstr "intrări/săptămână"
+
+#: templates/register.html:43
+msgid "Unlimited"
+msgstr "Nelimitat"
+
+#: templates/register.html:52
+msgid "Create User & Assign Subscription"
+msgstr "Creează utilizator și atribuie abonament"
+
+#: templates/users.html:6
+msgid "Members List"
+msgstr "Listă membri"
+
+#: templates/users.html:8
+msgid "New Member"
+msgstr "Membru nou"
+
+#: templates/users.html:16
+msgid "Name"
+msgstr "Nume"
+
+#: templates/users.html:17
+msgid "Phone"
+msgstr "Telefon"
+
+#: templates/users.html:20
+msgid "Expires On"
+msgstr "Expiră la"
+
+#: templates/users.html:34
+msgid "Inactive"
+msgstr "Inactiv"
+
+#: templates/users.html:42
+msgid "Edit"
+msgstr "Editează"
+
+#: templates/users.html:45
+msgid "Are you sure you want to delete this user? This action cannot be undone."
+msgstr "Sunteți sigur că doriți să ștergeți acest utilizator? Această acțiune nu poate fi anulată."
+
+#: templates/users.html:55
+msgid "No users found."
+msgstr "Nu s-au găsit utilizatori."
 
 #: venv/lib/python3.13/site-packages/click/_termui_impl.py:613
 #, python-brace-format
