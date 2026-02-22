@@ -26,11 +26,19 @@
                 </svg>
                 Access<span class="text-white">Control</span>
             </a>
-            <div class="space-x-4">
-                <a href="/" class="hover:text-emerald-400 transition">Scanner</a>
-                <a href="/users" class="hover:text-emerald-400 transition">Users</a>
-                <a href="/register" class="hover:text-emerald-400 transition">Register</a>
-                <a href="/admin" class="hover:text-emerald-400 transition">Logs</a>
+            <div class="space-x-4 flex items-center">
+                <a href="/" class="hover:text-emerald-400 transition">{{ _('Scanner') }}</a>
+                <a href="/users" class="hover:text-emerald-400 transition">{{ _('Users') }}</a>
+                <a href="/register" class="hover:text-emerald-400 transition">{{ _('Register') }}</a>
+                <a href="/admin" class="hover:text-emerald-400 transition">{{ _('Logs') }}</a>
+
+                <!-- Language Switcher -->
+                <div class="ml-4 pl-4 border-l border-slate-600 flex gap-2">
+                    <a href="/setlang/en"
+                        class="text-sm font-bold opacity-70 hover:opacity-100 hover:text-white transition">EN</a>
+                    <a href="/setlang/ro"
+                        class="text-sm font-bold opacity-70 hover:opacity-100 hover:text-white transition">RO</a>
+                </div>
             </div>
         </div>
     </nav>

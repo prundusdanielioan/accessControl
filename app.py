@@ -1,14 +1,28 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask_babel import Babel, _
 import database
 import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///access_control.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'your-secret-key-here'  # Required for sessions
+app.config['BABEL_DEFAULT_LOCALE'] = 'en'
+app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations'
+
+def get_locale():
+    return session.get('lang', 'en')
+
+babel = Babel(app, locale_selector=get_locale)
 
 # Initialize DB
 database.db.init_app(app)
 database.init_db(app)
+
+@app.route('/setlang/<lang_code>')
+def setlang(lang_code):
+    session['lang'] = lang_code
+    return redirect(request.referrer or url_for('index'))
 
 @app.route('/')
 def index():
