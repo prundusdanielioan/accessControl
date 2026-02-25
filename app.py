@@ -2,13 +2,28 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_babel import Babel, _
 import database
 import datetime
+import os
+import sys
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///access_control.db'
+# PyInstaller creează un folder temporar și stochează calea în _MEIPASS
+if getattr(sys, 'frozen', False):
+    base_dir = sys._MEIPASS # Aici sunt html-urile și traducerile dezarhivate
+    db_dir = os.path.dirname(sys.executable) # Aici e folderul unde se află .exe-ul efectiv
+else:
+    base_dir = os.path.abspath(os.path.dirname(__file__))
+    db_dir = base_dir
+
+# Când inițializezi Flask, îi spui exact unde să caute folderele
+app = Flask(__name__, 
+            template_folder=os.path.join(base_dir, 'templates'),
+            static_folder=os.path.join(base_dir, 'static'))
+
+app.config['BABEL_TRANSLATION_DIRECTORIES'] = os.path.join(base_dir, 'translations')
+db_path = os.path.join(db_dir, 'access_control.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Required for sessions
 app.config['BABEL_DEFAULT_LOCALE'] = 'en'
-app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations'
 
 def get_locale():
     return session.get('lang', 'en')
@@ -138,5 +153,10 @@ def delete_log(log_id):
     database.delete_log(log_id)
     return redirect(url_for('admin'))
 
+import webview
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Creăm fereastra aplicației
+    webview.create_window('Access Control', app, width=1200, height=800)
+    # webview.start() pornește serverul Flask intern și interfața
+    webview.start()

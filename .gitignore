@@ -1,0 +1,21 @@
+# Baza de date (nu vrei să urci datele utilizatorilor pe Git)
+instance/
+*.db
+*.sqlite3
+
+# Fisiere generate de PyInstaller (cand faci executabile)
+dist/
+build/
+*.spec
+
+# MacOS fisiere sistem
+.DS_Store
+
+# Fisiere de cache Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Mediu virtual
+venv/
+env/
