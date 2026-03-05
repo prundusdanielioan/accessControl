@@ -293,6 +293,7 @@ def delete_user(user_id):
     try:
         AccessLog.query.filter_by(user_id=user_id).delete()
         ActiveSubscription.query.filter_by(user_id=user_id).delete()
+        ClassParticipant.query.filter_by(user_id=user_id).delete()
         User.query.filter_by(id=user_id).delete()
         db.session.commit()
         return True
@@ -391,3 +392,38 @@ def delete_class_schedule(class_id):
         print(f"Error deleting class schedule: {e}")
         db.session.rollback()
         return False
+
+def get_subscription_stats():
+    stats = []
+    sub_types = SubscriptionType.query.all()
+    today = datetime.date.today()
+    for st in sub_types:
+        count = db.session.query(db.func.count(ActiveSubscription.id))\
+                .filter(ActiveSubscription.type_id == st.id)\
+                .filter(ActiveSubscription.end_date >= today)\
+                .scalar()
+        stats.append({'name': st.name, 'active_count': count})
+    return stats
+
+def get_class_stats():
+    stats = []
+    classes = ClassSchedule.query.order_by(ClassSchedule.day_of_week, ClassSchedule.start_time).all()
+    days_map = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică']
+    for c in classes:
+        count = db.session.query(db.func.count(ClassParticipant.id))\
+                .filter(ClassParticipant.class_id == c.id)\
+                .scalar()
+        
+        cap = c.capacity if c.capacity else 0
+        pct = (count / cap * 100) if cap > 0 else 0
+        
+        time_str = c.start_time.strftime('%H:%M') if hasattr(c.start_time, 'strftime') else str(c.start_time)
+        day_name = days_map[c.day_of_week] if 0 <= c.day_of_week <= 6 else str(c.day_of_week)
+        
+        stats.append({
+            'name': f"{c.name} ({day_name} {time_str})", 
+            'enrolled': count, 
+            'capacity': cap, 
+            'percentage': round(pct)
+        })
+    return stats

@@ -93,5 +93,14 @@
         // Remove focus so if they press enter they don't submit accidentally or overwrite it
         document.getElementById('rfid_tag_input').blur();
     }
+
+    // Prevent the RFID Scanner's 'Enter' keystroke from triggering accidental buttons or premature form submission
+    document.getElementById('rfid_tag_input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            // Optional: you can move focus to the next logical field if you want
+            document.querySelector('select[name="subscription_type"]').focus();
+        }
+    });
 </script>
 {% endblock %}

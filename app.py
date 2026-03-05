@@ -153,8 +153,10 @@ def admin():
 
     subscription_types = database.SubscriptionType.query.all()
     classes = database.get_all_classes()
+    sub_stats = database.get_subscription_stats()
+    class_stats = database.get_class_stats()
         
-    return render_template('admin.html', logs=logs, subscription_types=subscription_types, classes=classes)
+    return render_template('admin.html', logs=logs, subscription_types=subscription_types, classes=classes, sub_stats=sub_stats, class_stats=class_stats)
 
 @app.route('/admin/log/<int:log_id>/delete', methods=['POST'])
 def delete_log(log_id):
