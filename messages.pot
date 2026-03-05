@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-03-05 22:59+0200\n"
+"POT-Creation-Date: 2026-03-05 23:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,15 +50,15 @@ msgstr ""
 msgid "Access Granted"
 msgstr ""
 
-#: database.py:350
+#: database.py:373
 msgid "Cannot delete. There are active users with this subscription."
 msgstr ""
 
-#: database.py:354
+#: database.py:377
 msgid "Subscription type deleted."
 msgstr ""
 
-#: database.py:358
+#: database.py:381
 msgid "Error deleting subscription type."
 msgstr ""
 
@@ -88,7 +88,7 @@ msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/admin.html:15
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:21
-#: templates/admin.html:74 templates/users.html:21
+#: templates/admin.html:74 templates/users.html:60
 msgid "Actions"
 msgstr ""
 
@@ -110,7 +110,7 @@ msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/admin.html:40
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:48
-#: templates/admin.html:100 templates/users.html:70
+#: templates/admin.html:100 templates/users.html:108
 msgid "Delete"
 msgstr ""
 
@@ -138,7 +138,7 @@ msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:24
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:18
-#: templates/edit_user.html:24 templates/users.html:18
+#: templates/edit_user.html:24 templates/users.html:57
 msgid "RFID Tag"
 msgstr ""
 
@@ -149,7 +149,7 @@ msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:38
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:19
-#: templates/edit_user.html:38 templates/users.html:19
+#: templates/edit_user.html:38 templates/users.html:28 templates/users.html:58
 msgid "Subscription"
 msgstr ""
 
@@ -334,36 +334,37 @@ msgid "New Member"
 msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:16
-#: templates/users.html:16
+#: templates/users.html:16 templates/users.html:55
 msgid "Name"
 msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:17
-#: templates/users.html:17
+#: templates/users.html:22 templates/users.html:56
 msgid "Phone"
 msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:20
-#: templates/users.html:20
+#: templates/users.html:59
 msgid "Expires On"
 msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:34
-#: templates/users.html:55
+#: templates/users.html:94
 msgid "Inactive"
 msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:42
-#: templates/users.html:63
+#: templates/users.html:102
 msgid "Edit"
 msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:45
+#: templates/users.html:105
 msgid "Are you sure you want to delete this user? This action cannot be undone."
 msgstr ""
 
 #: dist/AccessControl.app/Contents/Resources/templates/users.html:55
-#: templates/users.html:77
+#: templates/users.html:115
 msgid "No users found."
 msgstr ""
 
@@ -599,17 +600,57 @@ msgstr ""
 msgid "No access history available for this user."
 msgstr ""
 
-#: templates/users.html:41
+#: templates/users.html:19
+msgid "Filter by name..."
+msgstr ""
+
+#: templates/users.html:25
+msgid "Filter by phone..."
+msgstr ""
+
+#: templates/users.html:31
+msgid "All Subscriptions"
+msgstr ""
+
+#: templates/users.html:32
+msgid ""
+"No Active\n"
+"                        Subscription"
+msgstr ""
+
+#: templates/users.html:43
+msgid "Filter"
+msgstr ""
+
+#: templates/users.html:46
+msgid "Clear"
+msgstr ""
+
+#: templates/users.html:80
 msgid "Show QR Code"
 msgstr ""
 
-#: templates/users.html:66
-msgid ""
-" Are you sure you want to delete this user? This action\n"
-"                            cannot be undone."
+#: templates/users.html:125
+msgid "Showing page"
 msgstr ""
 
-#: templates/users.html:99
+#: templates/users.html:125
+msgid "of"
+msgstr ""
+
+#: templates/users.html:126
+msgid "users"
+msgstr ""
+
+#: templates/users.html:131 templates/users.html:134
+msgid "Previous"
+msgstr ""
+
+#: templates/users.html:140 templates/users.html:143
+msgid "Next"
+msgstr ""
+
+#: templates/users.html:164
 msgid "Member should take a picture of this code to use for check-in."
 msgstr ""
 
