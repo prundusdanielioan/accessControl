@@ -461,3 +461,13 @@ def get_user_logs(user_id, limit=100):
             l_dict['timestamp'] = l_dict['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
         logs_list.append(l_dict)
     return logs_list
+
+def delete_access_log(log_id):
+    try:
+        AccessLog.query.filter_by(id=log_id).delete()
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error deleting access log: {e}")
+        db.session.rollback()
+        return False

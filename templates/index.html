@@ -156,14 +156,19 @@
                 lastAttemptInfo = `<br><span class="text-xs font-normal opacity-80 mt-4 block tracking-wider uppercase">{{ _('Last Attempt:') }} ${data.last_attempt.timestamp} - ${statusStr}</span>`;
             }
 
+            let userNameHTML = data.user_name;
+            if (data.user_id) {
+                userNameHTML = `<a href="/user/${data.user_id}" class="hover:text-white underline decoration-white/30 underline-offset-4 transition" title="{{ _('View Profile') }}">${data.user_name}</a>`;
+            }
+
             if (data.status === 'allowed') {
-                updateStatus("{{ _('ACCESS GRANTED') }}", `${data.user_name} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'emerald');
+                updateStatus("{{ _('ACCESS GRANTED') }}", `${userNameHTML} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'emerald');
                 playAudio('success');
             } else if (data.status === 'warning') {
-                updateStatus("{{ _('ACCESS GRANTED') }}", `${data.user_name} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'yellow');
+                updateStatus("{{ _('ACCESS GRANTED') }}", `${userNameHTML} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'yellow');
                 playAudio('warning');
             } else if (data.status === 'denied') {
-                updateStatus("{{ _('ACCESS DENIED') }}", `${data.user_name} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'red');
+                updateStatus("{{ _('ACCESS DENIED') }}", `${userNameHTML} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'red');
                 playAudio('error');
             } else if (data.status === 'unknown') {
                 updateStatus("{{ _('UNKNOWN USER') }}", `{{ _('Card:') }} ${rfid}`, 'amber');
