@@ -24,10 +24,22 @@
         </div>
 
         <div>
-            <label class="block text-slate-400 mb-2">{{ _('RFID Tag (Scan Card)') }}</label>
-            <input type="text" name="rfid_tag" value="{{ rfid_prefill }}" required autofocus
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-2">
+                <label class="block text-slate-400">{{ _('Access Tag (Scan Card)') }}</label>
+                <button type="button" onclick="generateQRID()"
+                    class="mt-2 md:mt-0 text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded transition flex items-center justify-center gap-1 shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    </svg>
+                    {{ _('Generate Web QR ID') }}
+                </button>
+            </div>
+            <input type="text" name="rfid_tag" id="rfid_tag_input" value="{{ rfid_prefill }}" required autofocus
                 class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition font-mono text-yellow-500">
-            <p class="text-xs text-slate-500 mt-1">{{ _('Click the field and scan the card.') }}</p>
+            <p class="text-xs text-slate-500 mt-1">{{ _('Click the field and scan the card, or Generate a QR ID if they
+                use their phone.') }}</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -71,4 +83,15 @@
         </button>
     </form>
 </div>
+
+<script>
+    function generateQRID() {
+        // Generate a 6-character random alphanumeric string prefixed with QR-
+        const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+        document.getElementById('rfid_tag_input').value = `QR-${randomStr}`;
+
+        // Remove focus so if they press enter they don't submit accidentally or overwrite it
+        document.getElementById('rfid_tag_input').blur();
+    }
+</script>
 {% endblock %}

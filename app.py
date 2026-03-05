@@ -192,9 +192,19 @@ def delete_class_schedule(class_id):
     return redirect(url_for('admin'))
 
 import webview
+import threading
+
+def start_server():
+    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
 
 if __name__ == '__main__':
-    # Creăm fereastra aplicației
-    webview.create_window('Access Control', app, width=1200, height=800)
-    # webview.start() pornește serverul Flask intern și interfața
+    # Pornim serverul Flask pe un thread separat, la portul 5000
+    t = threading.Thread(target=start_server)
+    t.daemon = True
+    t.start()
+    
+    # Creăm fereastra aplicației conectată la server
+    webview.create_window('Access Control', 'http://127.0.0.1:5000', width=1200, height=800)
+    
+    # Pornim interfața desktop
     webview.start()

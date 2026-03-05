@@ -26,7 +26,23 @@
                 <tr class="hover:bg-slate-700/50 transition">
                     <td class="p-4 font-semibold text-white">{{ user['name'] }}</td>
                     <td class="p-4 text-slate-300">{{ user['phone'] }}</td>
-                    <td class="p-4 text-slate-400 font-mono text-sm">{{ user['rfid_tag'] }}</td>
+                    <td class="p-4 text-slate-400 font-mono text-sm">
+                        <div class="flex items-center gap-2">
+                            <span>{{ user['rfid_tag'] }}</span>
+                            {% if user['rfid_tag'].startswith('QR-') %}
+                            <button data-rfid="{{ user['rfid_tag'] }}" data-name="{{ user['name'] }}"
+                                onclick="showQR(this.dataset.rfid, this.dataset.name)"
+                                class="p-1 bg-slate-700 hover:bg-slate-600 rounded text-indigo-400 transition"
+                                title="{{ _('Show QR Code') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                </svg>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
                     <td class="p-4">
                         {% if user['sub_name'] %}
                         <span class="text-emerald-400">{{ _(user['sub_name']) }}</span>
@@ -42,7 +58,8 @@
                             class="text-indigo-400 hover:text-indigo-300 font-medium whitespace-nowrap">{{ _('Edit')
                             }}</a>
                         <form action="/user/{{ user['id'] }}/delete" method="POST" class="inline"
-                            onsubmit="return confirm('{{ _( "Are you sure you want to delete this user? This action cannot be undone." ) }}');">
+                            onsubmit="return confirm('{{ _( " Are you sure you want to delete this user? This action
+                            cannot be undone." ) }}');">
                             <button type="submit"
                                 class="text-rose-400 hover:text-rose-300 font-medium whitespace-nowrap">
                                 {{ _('Delete') }}
@@ -59,4 +76,42 @@
         </table>
     </div>
 </div>
+
+<!-- QR Modal -->
+<div id="qr-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-slate-700 relative">
+        <button onclick="closeQR()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        <h2 id="qr-title" class="text-2xl font-bold text-emerald-400 mb-6 font-sans"></h2>
+        <div class="bg-white p-4 rounded-xl inline-block mb-6 shadow-inner">
+            <img id="qr-image" src="" alt="QR Code" class="w-48 h-48 md:w-64 md:h-64">
+        </div>
+        <p id="qr-tag" class="text-slate-400 font-mono text-xl tracking-widest font-bold"></p>
+        <p class="text-sm text-slate-500 mt-4">{{ _('Member should take a picture of this code to use for check-in.') }}
+        </p>
+    </div>
+</div>
+
+<script>
+    function showQR(tag, name) {
+        document.getElementById('qr-title').textContent = name;
+        document.getElementById('qr-tag').textContent = tag;
+        // Using an external API to generate the QR code image on the fly
+        document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(tag)}`;
+
+        const modal = document.getElementById('qr-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeQR() {
+        const modal = document.getElementById('qr-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+</script>
 {% endblock %}

@@ -18,8 +18,25 @@
         <p class="text-slate-500 text-sm text-center mt-2">{{ _('Make sure this input is focused when scanning.') }}</p>
     </div>
 
+    <!-- QR Code Scanner Section -->
+    <div class="mt-8 w-full max-w-md text-center">
+        <button id="toggle-qr-btn"
+            class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-6 rounded-xl transition shadow-lg mb-4 flex items-center justify-center w-full gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+            </svg>
+            {{ _('Open QR Code Scanner') }}
+        </button>
+        <div id="qr-reader"
+            class="w-full hidden bg-slate-900 rounded-xl overflow-hidden border-2 border-slate-600 shadow-inner"></div>
+    </div>
+
 </div>
 
+<!-- Load html5-qrcode -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
     const input = document.getElementById('rfid-input');
     const statusBox = document.getElementById('status-box');
@@ -39,6 +56,77 @@
             }
         }
     });
+
+    // QR Code Scanner Logic
+    const toggleQrBtn = document.getElementById('toggle-qr-btn');
+    const qrReaderDiv = document.getElementById('qr-reader');
+    let html5QrcodeScanner = null;
+    let isScanning = false;
+
+    toggleQrBtn.addEventListener('click', () => {
+        if (qrReaderDiv.classList.contains('hidden')) {
+            // Verifica daca suntem in secure context (localhost sau https)
+            if (!window.isSecureContext && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                alert("{{ _('Camera access requires a secure connection. Please access the app via http://localhost:5000') }}");
+                return;
+            }
+
+            // Open scanner
+            qrReaderDiv.classList.remove('hidden');
+            toggleQrBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                {{ _('Close QR Code Scanner') }}`;
+            toggleQrBtn.classList.replace('bg-indigo-600', 'bg-red-600');
+            toggleQrBtn.classList.replace('hover:bg-indigo-500', 'hover:bg-red-500');
+
+            if (!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5QrcodeScanner(
+                    "qr-reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            }
+        } else {
+            // Close scanner
+            qrReaderDiv.classList.add('hidden');
+            toggleQrBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                </svg>
+                {{ _('Open QR Code Scanner') }}`;
+            toggleQrBtn.classList.replace('bg-red-600', 'bg-indigo-600');
+            toggleQrBtn.classList.replace('hover:bg-red-500', 'hover:bg-indigo-500');
+
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
+            }
+        }
+    });
+
+    function onScanSuccess(decodedText, decodedResult) {
+        if (isScanning) return; // Prevent spamming backend
+
+        isScanning = true;
+
+        // Pausing the scanner visual feed gives good feedback
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.pause();
+        }
+
+        processScan(decodedText).finally(() => {
+            setTimeout(() => {
+                isScanning = false;
+                if (html5QrcodeScanner) {
+                    html5QrcodeScanner.resume();
+                }
+            }, 4000); // Wait 4s before allowing another scan
+        });
+    }
+
+    function onScanFailure(error) {
+        // Handle scan failure - ignore silently to keep scanning
+    }
 
     async function processScan(rfid) {
         // Reset state temporarily
