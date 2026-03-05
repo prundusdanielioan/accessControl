@@ -7,277 +7,630 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-02-22 21:03+0200\n"
+"POT-Creation-Date: 2026-03-05 22:59+0200\n"
 "PO-Revision-Date: 2026-02-22 20:17+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: ro\n"
 "Language-Team: ro <LL@li.org>\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100"
-" < 20)) ? 1 : 2);\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2);\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: database.py:116 templates/edit_user.html:61
-msgid "No active subscription found."
+#: database.py:160
+#, fuzzy
+msgid "No active subscription or class found."
 msgstr "Nu s-a găsit niciun abonament activ."
 
-#: database.py:123
+#: database.py:184
+#, python-format
+msgid "Access Granted for Class: %(classes)s"
+msgstr ""
+
+#: database.py:187
+#, python-format
+msgid "Access Denied. Next class today at: %(details)s"
+msgstr ""
+
+#: database.py:191
+#, python-format
+msgid "Access Denied. Your classes (%(classes)s) are not scheduled for today."
+msgstr ""
+
+#: database.py:208
 #, python-format
 msgid "Weekly limit reached (%(count)s/%(total)s)."
 msgstr "Limita săptămânală a fost atinsă (%(count)s/%(total)s)."
 
-#: database.py:128
+#: database.py:213
 #, python-format
 msgid "Access Granted. Expires in %(days)s days (%(date)s)"
 msgstr "Acces permis. Expiră în %(days)s zile (%(date)s)"
 
-#: database.py:130
+#: database.py:215
 msgid "Access Granted"
 msgstr "Acces permis"
 
-#: templates/admin.html:5
+#: database.py:350
+msgid "Cannot delete. There are active users with this subscription."
+msgstr ""
+
+#: database.py:354
+#, fuzzy
+msgid "Subscription type deleted."
+msgstr "Abonament"
+
+#: database.py:358
+#, fuzzy
+msgid "Error deleting subscription type."
+msgstr "Selectați abonamentul"
+
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:5
 msgid "Access Logs"
 msgstr "Jurnal de acces"
 
-#: templates/admin.html:11
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:11
+#: templates/admin.html:70
 msgid "Time"
 msgstr "Timp"
 
-#: templates/admin.html:12
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:12
+#: templates/admin.html:71
 msgid "User"
 msgstr "Utilizator"
 
-#: templates/admin.html:13
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:13
+#: templates/admin.html:72
 msgid "Status"
 msgstr "Stare"
 
-#: templates/admin.html:14
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:14
+#: templates/admin.html:73
 msgid "Message"
 msgstr "Mesaj"
 
-#: templates/admin.html:15 templates/users.html:21
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:15
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:21
+#: templates/admin.html:74 templates/users.html:21
 msgid "Actions"
 msgstr "Acțiuni"
 
-#: templates/admin.html:27
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:27
+#: templates/admin.html:86
 msgid "ALLOWED"
 msgstr "PERMIS"
 
-#: templates/admin.html:31
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:31
+#: templates/admin.html:90
 msgid "DENIED"
 msgstr "RESPINS"
 
-#: templates/admin.html:37
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:37
 msgid ""
 "Are you sure you want to delete this log entry? This action cannot be "
 "undone."
 msgstr ""
-"Sunteți sigur că doriți să ștergeți acest jurnal? Această acțiune nu "
-"poate fi anulată."
+"Sunteți sigur că doriți să ștergeți acest jurnal? Această acțiune nu poate "
+"fi anulată."
 
-#: templates/admin.html:40 templates/users.html:48
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:40
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:48
+#: templates/admin.html:100 templates/users.html:70
 msgid "Delete"
 msgstr "Șterge"
 
-#: templates/admin.html:47
+#: dist/AccessControl.app/Contents/Resources/templates/admin.html:47
+#: templates/admin.html:107
 msgid "No logs found."
 msgstr "Niciun jurnal găsit."
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:8
 #: templates/edit_user.html:8
 msgid "Edit Details"
 msgstr "Editează detaliile"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:12
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:15
 #: templates/edit_user.html:12 templates/register.html:15
 msgid "Full Name"
 msgstr "Nume complet"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:18
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:21
 #: templates/edit_user.html:18 templates/register.html:21
 msgid "Phone Number"
 msgstr "Număr de telefon"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:24
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:18
 #: templates/edit_user.html:24 templates/users.html:18
 msgid "RFID Tag"
 msgstr "Etichetă RFID"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:31
 #: templates/edit_user.html:31
 msgid "Update Details"
 msgstr "Actualizează detaliile"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:38
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:19
 #: templates/edit_user.html:38 templates/users.html:19
 msgid "Subscription"
 msgstr "Abonament"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:42
 #: templates/edit_user.html:42
 msgid "Current Plan"
 msgstr "Planul actual"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:47
 #: templates/edit_user.html:47
 msgid "Starts"
 msgstr "Începe"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:51
 #: templates/edit_user.html:51
 msgid "Ends"
 msgstr "Se termină"
 
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:61
+#: templates/edit_user.html:61
+msgid "No active subscription found."
+msgstr "Nu s-a găsit niciun abonament activ."
+
+#: dist/AccessControl.app/Contents/Resources/templates/edit_user.html:64
 #: templates/edit_user.html:64
 msgid "To add a new subscription, please use the Register page."
 msgstr "Pentru a adăuga un abonament nou, folosiți pagina de Înregistrare."
 
-#: templates/index.html:9 templates/index.html:110
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:9
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:110
+#: templates/index.html:9 templates/index.html:210
 msgid "READY"
 msgstr "PREGĂTIT"
 
-#: templates/index.html:10 templates/index.html:111
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:10
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:111
+#: templates/index.html:10 templates/index.html:211
 msgid "Scan card to verify access"
 msgstr "Scanați cardul pentru a verifica accesul"
 
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:17
 #: templates/index.html:17
 msgid "Click here and scan card..."
 msgstr "Faceți clic aici și scanați cardul..."
 
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:18
 #: templates/index.html:18
 msgid "Make sure this input is focused when scanning."
 msgstr "Asigurați-vă că acest câmp este selectat când scanați."
 
-#: templates/index.html:45
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:45
+#: templates/index.html:133
 msgid "PROCESSING"
 msgstr "PROCESARE"
 
-#: templates/index.html:45
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:45
+#: templates/index.html:133
 msgid "Checking database..."
 msgstr "Se verifică baza de date..."
 
-#: templates/index.html:56
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:56
+#: templates/index.html:151
 msgid "This week:"
 msgstr "Săptămâna aceasta:"
 
-#: templates/index.html:56
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:56
+#: templates/index.html:151
 msgid "scans"
 msgstr "scanări"
 
-#: templates/index.html:60
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:60
+#: templates/index.html:155
 msgid "Allowed"
 msgstr "Permis"
 
-#: templates/index.html:60
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:60
+#: templates/index.html:155
 msgid "Denied"
 msgstr "Respins"
 
-#: templates/index.html:61
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:61
+#: templates/index.html:156
 msgid "Last Attempt:"
 msgstr "Ultima încercare:"
 
-#: templates/index.html:65 templates/index.html:68
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:65
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:68
+#: templates/index.html:165 templates/index.html:168
 msgid "ACCESS GRANTED"
 msgstr "ACCES PERMIS"
 
-#: templates/index.html:71
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:71
+#: templates/index.html:171
 msgid "ACCESS DENIED"
 msgstr "ACCES RESPINS"
 
-#: templates/index.html:74
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:74
+#: templates/index.html:174
 msgid "UNKNOWN USER"
 msgstr "UTILIZATOR NECUNOSCUT"
 
-#: templates/index.html:74
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:74
+#: templates/index.html:174
 msgid "Card:"
 msgstr "Card:"
 
-#: templates/index.html:77
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:77
+#: templates/index.html:177
 msgid "User not found. Register card"
 msgstr "Utilizator negăsit. Înregistrați cardul"
 
-#: templates/index.html:84
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:84
+#: templates/index.html:184
 msgid "ERROR"
 msgstr "EROARE"
 
-#: templates/index.html:84
+#: dist/AccessControl.app/Contents/Resources/templates/index.html:84
+#: templates/index.html:184
 msgid "System error occurred"
 msgstr "A apărut o eroare de sistem"
 
+#: dist/AccessControl.app/Contents/Resources/templates/layout.html:30
 #: templates/layout.html:30
 msgid "Scanner"
 msgstr "Scaner"
 
+#: dist/AccessControl.app/Contents/Resources/templates/layout.html:31
 #: templates/layout.html:31
 msgid "Users"
 msgstr "Utilizatori"
 
+#: dist/AccessControl.app/Contents/Resources/templates/layout.html:32
 #: templates/layout.html:32
 msgid "Register"
 msgstr "Înregistrare"
 
+#: dist/AccessControl.app/Contents/Resources/templates/layout.html:33
 #: templates/layout.html:33
 msgid "Logs"
 msgstr "Jurnal"
 
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:5
 #: templates/register.html:5
 msgid "Register New User"
 msgstr "Înregistrare utilizator nou"
 
-#: templates/register.html:27
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:27
 msgid "RFID Tag (Scan Card)"
 msgstr "Etichetă RFID (Scanați cardul)"
 
-#: templates/register.html:30
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:30
 msgid "Click the field and scan the card."
 msgstr "Faceți clic pe câmp și scanați cardul."
 
-#: templates/register.html:34
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:34
 msgid "Select Subscription"
 msgstr "Selectați abonamentul"
 
-#: templates/register.html:41
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:41
+#: templates/register.html:55
 msgid "entries/week"
 msgstr "intrări/săptămână"
 
-#: templates/register.html:43
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:43
+#: templates/register.html:57
 msgid "Unlimited"
 msgstr "Nelimitat"
 
-#: templates/register.html:52
+#: dist/AccessControl.app/Contents/Resources/templates/register.html:52
+#: templates/register.html:82
 msgid "Create User & Assign Subscription"
 msgstr "Creează utilizator și atribuie abonament"
 
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:6
 #: templates/users.html:6
 msgid "Members List"
 msgstr "Listă membri"
 
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:8
 #: templates/users.html:8
 msgid "New Member"
 msgstr "Membru nou"
 
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:16
 #: templates/users.html:16
 msgid "Name"
 msgstr "Nume"
 
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:17
 #: templates/users.html:17
 msgid "Phone"
 msgstr "Telefon"
 
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:20
 #: templates/users.html:20
 msgid "Expires On"
 msgstr "Expiră la"
 
-#: templates/users.html:34
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:34
+#: templates/users.html:55
 msgid "Inactive"
 msgstr "Inactiv"
 
-#: templates/users.html:42
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:42
+#: templates/users.html:63
 msgid "Edit"
 msgstr "Editează"
 
-#: templates/users.html:45
-msgid "Are you sure you want to delete this user? This action cannot be undone."
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:45
+msgid ""
+"Are you sure you want to delete this user? This action cannot be undone."
 msgstr ""
 "Sunteți sigur că doriți să ștergeți acest utilizator? Această acțiune nu "
 "poate fi anulată."
 
-#: templates/users.html:55
+#: dist/AccessControl.app/Contents/Resources/templates/users.html:55
+#: templates/users.html:77
 msgid "No users found."
 msgstr "Nu s-au găsit utilizatori."
+
+#: templates/admin.html:5
+msgid "Admin Dashboard"
+msgstr "Panou Administrare"
+
+#: templates/admin.html:17
+#, fuzzy
+msgid "Active Subscriptions"
+msgstr "Nu s-a găsit niciun abonament activ."
+
+#: templates/admin.html:24
+msgid "mbs."
+msgstr ""
+
+#: templates/admin.html:28
+#, fuzzy
+msgid "No active subscriptions."
+msgstr "Nu s-a găsit niciun abonament activ."
+
+#: templates/admin.html:41
+msgid "Class Occupancy"
+msgstr "Grad Ocupare Clase"
+
+#: templates/admin.html:60
+msgid "No classes scheduled."
+msgstr ""
+
+#: templates/admin.html:96
+#, fuzzy
+msgid ""
+" Are you sure you want to delete this log entry? This\n"
+"                            action cannot be undone."
+msgstr ""
+"Sunteți sigur că doriți să ștergeți acest jurnal? Această acțiune nu poate "
+"fi anulată."
+
+#: templates/admin.html:117
+msgid "Subscription Types"
+msgstr "Tipuri Abonamente"
+
+#: templates/admin.html:121
+msgid "Name (e.g. Unlimited)"
+msgstr "Nume (ex. Nelimitat)"
+
+#: templates/admin.html:124
+msgid "Entries/Wk (Empty: Unlim)"
+msgstr "Intrări/Săpt (Gol: Nelimitat)"
+
+#: templates/admin.html:126
+msgid "Days"
+msgstr "Zile"
+
+#: templates/admin.html:128
+msgid "Price"
+msgstr "Preț"
+
+#: templates/admin.html:133
+msgid "Add Subscription Type"
+msgstr "Adaugă Tip Abonament"
+
+#: templates/admin.html:152
+msgid "Delete this subscription type?"
+msgstr "Ștergeți acest tip de abonament?"
+
+#: templates/admin.html:153 templates/admin.html:211
+msgid "Del"
+msgstr "Șterg"
+
+#: templates/admin.html:165
+msgid "Class Schedules"
+msgstr "Orare Clase"
+
+#: templates/admin.html:169
+msgid "Class Name (e.g. BJJ)"
+msgstr "Nume Clasă (ex. BJJ)"
+
+#: templates/admin.html:174
+msgid "Monday"
+msgstr "Luni"
+
+#: templates/admin.html:175
+msgid "Tuesday"
+msgstr "Marți"
+
+#: templates/admin.html:176
+msgid "Wednesday"
+msgstr "Miercuri"
+
+#: templates/admin.html:177
+msgid "Thursday"
+msgstr "Joi"
+
+#: templates/admin.html:178
+msgid "Friday"
+msgstr "Vineri"
+
+#: templates/admin.html:179
+msgid "Saturday"
+msgstr "Sâmbătă"
+
+#: templates/admin.html:180
+msgid "Sunday"
+msgstr "Duminică"
+
+#: templates/admin.html:184
+msgid "Capacity"
+msgstr "Capacitate"
+
+#: templates/admin.html:189
+msgid "Add Class Schedule"
+msgstr "Adaugă Clasă"
+
+#: templates/admin.html:205 templates/register.html:72
+msgid "Mon"
+msgstr "Lu"
+
+#: templates/admin.html:205 templates/register.html:72
+msgid "Tue"
+msgstr "Ma"
+
+#: templates/admin.html:205 templates/register.html:72
+msgid "Wed"
+msgstr "Mi"
+
+#: templates/admin.html:205 templates/register.html:72
+msgid "Thu"
+msgstr "Jo"
+
+#: templates/admin.html:205 templates/register.html:72
+msgid "Fri"
+msgstr "Vi"
+
+#: templates/admin.html:205 templates/register.html:72
+msgid "Sat"
+msgstr "Sâ"
+
+#: templates/admin.html:205 templates/register.html:72
+msgid "Sun"
+msgstr "Du"
+
+#: templates/admin.html:210
+msgid "Delete this class?"
+msgstr "Ștergeți această clasă?"
+
+#: templates/index.html:30 templates/index.html:96
+msgid "Open QR Code Scanner"
+msgstr "Deschide Scaner QR Code"
+
+#: templates/index.html:70
+msgid ""
+"Camera access requires a secure connection. Please access the app via "
+"http://localhost:5000"
+msgstr ""
+"Accesul la cameră necesită o conexiune securizată (HTTPS sau localhost)."
+
+#: templates/index.html:80
+msgid "Close QR Code Scanner"
+msgstr "Închide Scaner QR"
+
+#: templates/index.html:161
+msgid "View Profile"
+msgstr "Vezi Profil"
+
+#: templates/register.html:28
+msgid "Access Tag (Scan Card)"
+msgstr "Tag Acces (Scanați Cardul)"
+
+#: templates/register.html:36
+msgid "Generate Web QR ID"
+msgstr "Generează ID QR Web"
+
+#: templates/register.html:41
+msgid ""
+"Click the field and scan the card, or Generate a QR ID if they\n"
+"                use their phone."
+msgstr "Faceți clic și scanați cardul, sau generați un QR pentru telefon."
+
+#: templates/register.html:47
+msgid "Select Subscription (Optional)"
+msgstr "Alege Abonament (Opțional)"
+
+#: templates/register.html:50 templates/register.html:68
+msgid "None"
+msgstr "Niciunul"
+
+#: templates/register.html:65
+msgid "Select Class (Optional)"
+msgstr "Alege Clasă (Opțional)"
+
+#: templates/user_profile.html:13
+msgid "User Profile"
+msgstr "Profil Utilizator"
+
+#: templates/user_profile.html:39
+msgid "Active Plan:"
+msgstr "Plan Activ:"
+
+#: templates/user_profile.html:43
+msgid "Expires:"
+msgstr "Expiră la:"
+
+#: templates/user_profile.html:47
+msgid "No Standard Subscriptions Active"
+msgstr "Fără Abonamente Standard Active"
+
+#: templates/user_profile.html:53
+msgid "Enrolled Classes:"
+msgstr "Clase Înscrise:"
+
+#: templates/user_profile.html:72
+msgid "Edit User"
+msgstr "Editează Utilizator"
+
+#: templates/user_profile.html:81
+msgid ""
+"Total Lifetime\n"
+"                    Visits"
+msgstr ""
+"Total Vizite\n"
+"                    Înregistrate"
+
+#: templates/user_profile.html:95
+msgid "Visits This Month"
+msgstr "Vizite Luna Aceasta"
+
+#: templates/user_profile.html:112
+msgid "Access History Timeline"
+msgstr "Istoric Accesări"
+
+#: templates/user_profile.html:142
+msgid "Are you sure you want to delete this log entry?"
+msgstr "Sunteți sigur că doriți să ștergeți această intrare?"
+
+#: templates/user_profile.html:145
+msgid "Delete log"
+msgstr "Șterge jurnal"
+
+#: templates/user_profile.html:159
+msgid "No access history available for this user."
+msgstr "Niciun istoric de acces disponibil pentru acest utilizator."
+
+#: templates/users.html:41
+msgid "Show QR Code"
+msgstr "Arată Cod QR"
+
+#: templates/users.html:66
+msgid ""
+" Are you sure you want to delete this user? This action\n"
+"                            cannot be undone."
+msgstr ""
+"Sunteți sigur că doriți să ștergeți utilizatorul? Această acțiune nu poate "
+"fi anulată."
+
+#: templates/users.html:99
+msgid "Member should take a picture of this code to use for check-in."
+msgstr "Membrul ar trebui să facă o poză acestui cod pentru acces."
 
 #: venv/lib/python3.13/site-packages/click/_termui_impl.py:613
 #, python-brace-format
@@ -344,8 +697,7 @@ msgstr[2] ""
 #: venv/lib/python3.13/site-packages/click/core.py:2567
 #, python-brace-format
 msgid ""
-"DeprecationWarning: The {param_type} {name!r} is "
-"deprecated.{extra_message}"
+"DeprecationWarning: The {param_type} {name!r} is deprecated.{extra_message}"
 msgstr ""
 
 #: venv/lib/python3.13/site-packages/click/core.py:3015
@@ -591,4 +943,3 @@ msgid_plural "{len_type} values are required, but {len_value} were given."
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
-
