@@ -115,16 +115,20 @@ def get_users_route():
     name = request.args.get('name', '')
     phone = request.args.get('phone', '')
     sub_id = request.args.get('sub_id', '')
+    class_id = request.args.get('class_id', '')
     
-    paginated_data = database.get_users_paginated(page=page, per_page=50, search_name=name, search_phone=phone, search_sub_id=sub_id)
+    paginated_data = database.get_users_paginated(page=page, per_page=50, search_name=name, search_phone=phone, search_sub_id=sub_id, search_class_id=class_id)
     subscription_types = database.SubscriptionType.query.all()
+    classes = database.ClassSchedule.query.all()
     
     return render_template('users.html', 
                           paginated_data=paginated_data, 
                           subscription_types=subscription_types,
+                          classes=classes,
                           search_name=name,
                           search_phone=phone,
-                          search_sub_id=sub_id)
+                          search_sub_id=sub_id,
+                          search_class_id=class_id)
 
 @app.route('/user/<int:user_id>')
 def user_profile(user_id):

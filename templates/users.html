@@ -11,7 +11,7 @@
 
     <!-- Filters -->
     <div class="bg-slate-800 rounded-lg shadow-md p-4 mb-6 border border-slate-700">
-        <form method="GET" action="/users" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form method="GET" action="/users" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
             <div>
                 <label class="block text-slate-400 text-sm font-semibold mb-2">{{ _('Name') }}</label>
                 <input type="text" name="name" value="{{ search_name }}"
@@ -34,6 +34,17 @@
                     {% for st in subscription_types %}
                     <option value="{{ st.id }}" {% if search_sub_id|string==st.id|string %}selected{% endif %}>{{
                         st.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm font-semibold mb-2">{{ _('Class') }}</label>
+                <select name="class_id"
+                    class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                    <option value="">{{ _('All Classes') }}</option>
+                    {% for c in classes %}
+                    <option value="{{ c.id }}" {% if search_class_id|string==c.id|string %}selected{% endif %}>{{ c.name
+                        }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -126,7 +137,7 @@
             paginated_data['pa_pages'] }} ({{ paginated_data['pa_total'] }} {{ _('users') }})</p>
         <div class="flex gap-2">
             {% if paginated_data['pa_has_prev'] %}
-            <a href="{{ url_for('get_users_route', page=paginated_data['pa_prev_num'], name=search_name, phone=search_phone, sub_id=search_sub_id) }}"
+            <a href="{{ url_for('get_users_route', page=paginated_data['pa_prev_num'], name=search_name, phone=search_phone, sub_id=search_sub_id, class_id=search_class_id) }}"
                 class="bg-slate-800 border border-slate-600 text-slate-300 px-4 py-2 rounded hover:bg-slate-700 transition">{{
                 _('Previous') }}</a>
             {% else %}
@@ -135,7 +146,7 @@
             {% endif %}
 
             {% if paginated_data['pa_has_next'] %}
-            <a href="{{ url_for('get_users_route', page=paginated_data['pa_next_num'], name=search_name, phone=search_phone, sub_id=search_sub_id) }}"
+            <a href="{{ url_for('get_users_route', page=paginated_data['pa_next_num'], name=search_name, phone=search_phone, sub_id=search_sub_id, class_id=search_class_id) }}"
                 class="bg-slate-800 border border-slate-600 text-white px-4 py-2 rounded hover:bg-slate-700 transition">{{
                 _('Next') }}</a>
             {% else %}

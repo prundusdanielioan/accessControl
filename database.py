@@ -214,7 +214,7 @@ def check_access(user_id):
 
     return True, _("Access Granted"), "allowed", sub_name, count
 
-def get_users_paginated(page=1, per_page=50, search_name=None, search_phone=None, search_sub_id=None):
+def get_users_paginated(page=1, per_page=50, search_name=None, search_phone=None, search_sub_id=None, search_class_id=None):
     query = db.session.query(User, ActiveSubscription.end_date, SubscriptionType.name.label('sub_name'), SubscriptionType.id.label('sub_type_id'))\
         .outerjoin(ActiveSubscription, (User.id == ActiveSubscription.user_id) & (ActiveSubscription.end_date >= datetime.date.today()))\
         .outerjoin(SubscriptionType, ActiveSubscription.type_id == SubscriptionType.id)
@@ -229,6 +229,10 @@ def get_users_paginated(page=1, per_page=50, search_name=None, search_phone=None
             query = query.filter(ActiveSubscription.id == None)
         else:
             query = query.filter(SubscriptionType.id == search_sub_id)
+            
+    if search_class_id:
+        query = query.join(ClassParticipant, User.id == ClassParticipant.user_id)\
+                     .filter(ClassParticipant.class_id == search_class_id)
             
     query = query.order_by(User.id.desc())
     paginated = query.paginate(page=page, per_page=per_page, error_out=False)
