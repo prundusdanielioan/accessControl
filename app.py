@@ -110,9 +110,21 @@ def register():
     return render_template('register.html', sub_types=sub_types, classes=classes, rfid_prefill=rfid_prefill)
 
 @app.route('/users')
-def get_users():
-    users = database.get_all_users()
-    return render_template('users.html', users=users)
+def get_users_route():
+    page = request.args.get('page', 1, type=int)
+    name = request.args.get('name', '')
+    phone = request.args.get('phone', '')
+    sub_id = request.args.get('sub_id', '')
+    
+    paginated_data = database.get_users_paginated(page=page, per_page=50, search_name=name, search_phone=phone, search_sub_id=sub_id)
+    subscription_types = database.SubscriptionType.query.all()
+    
+    return render_template('users.html', 
+                          paginated_data=paginated_data, 
+                          subscription_types=subscription_types,
+                          search_name=name,
+                          search_phone=phone,
+                          search_sub_id=sub_id)
 
 @app.route('/user/<int:user_id>')
 def user_profile(user_id):

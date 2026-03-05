@@ -9,6 +9,45 @@
         </a>
     </div>
 
+    <!-- Filters -->
+    <div class="bg-slate-800 rounded-lg shadow-md p-4 mb-6 border border-slate-700">
+        <form method="GET" action="/users" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div>
+                <label class="block text-slate-400 text-sm font-semibold mb-2">{{ _('Name') }}</label>
+                <input type="text" name="name" value="{{ search_name }}"
+                    class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    placeholder="{{ _('Filter by name...') }}">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm font-semibold mb-2">{{ _('Phone') }}</label>
+                <input type="text" name="phone" value="{{ search_phone }}"
+                    class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    placeholder="{{ _('Filter by phone...') }}">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm font-semibold mb-2">{{ _('Subscription') }}</label>
+                <select name="sub_id"
+                    class="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                    <option value="">{{ _('All Subscriptions') }}</option>
+                    <option value="none" {% if search_sub_id=='none' %}selected{% endif %}>{{ _('No Active
+                        Subscription') }}</option>
+                    {% for st in subscription_types %}
+                    <option value="{{ st.id }}" {% if search_sub_id|string==st.id|string %}selected{% endif %}>{{
+                        st.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit"
+                    class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded transition w-full">{{
+                    _('Filter') }}</button>
+                <a href="/users"
+                    class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2 px-4 rounded transition text-center w-full">{{
+                    _('Clear') }}</a>
+            </div>
+        </form>
+    </div>
+
     <div class="bg-slate-800 rounded-lg shadow-xl overflow-hidden border border-slate-700">
         <table class="w-full text-left border-collapse">
             <thead>
@@ -22,7 +61,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-700">
-                {% for user in users %}
+                {% for user in paginated_data['items'] %}
                 <tr class="hover:bg-slate-700/50 transition">
                     <td class="p-4 font-semibold">
                         <a href="/user/{{ user['id'] }}"
@@ -63,8 +102,7 @@
                             class="text-indigo-400 hover:text-indigo-300 font-medium whitespace-nowrap">{{ _('Edit')
                             }}</a>
                         <form action="/user/{{ user['id'] }}/delete" method="POST" class="inline"
-                            onsubmit="return confirm('{{ _( " Are you sure you want to delete this user? This action
-                            cannot be undone." ) }}');">
+                            onsubmit="return confirm(`{{ _('Are you sure you want to delete this user? This action cannot be undone.') }}`);">
                             <button type="submit"
                                 class="text-rose-400 hover:text-rose-300 font-medium whitespace-nowrap">
                                 {{ _('Delete') }}
@@ -80,6 +118,33 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination -->
+    {% if paginated_data['pa_pages'] > 1 %}
+    <div class="flex justify-between items-center mt-6">
+        <p class="text-slate-400 text-sm">{{ _('Showing page') }} {{ paginated_data['pa_page'] }} {{ _('of') }} {{
+            paginated_data['pa_pages'] }} ({{ paginated_data['pa_total'] }} {{ _('users') }})</p>
+        <div class="flex gap-2">
+            {% if paginated_data['pa_has_prev'] %}
+            <a href="{{ url_for('get_users_route', page=paginated_data['pa_prev_num'], name=search_name, phone=search_phone, sub_id=search_sub_id) }}"
+                class="bg-slate-800 border border-slate-600 text-slate-300 px-4 py-2 rounded hover:bg-slate-700 transition">{{
+                _('Previous') }}</a>
+            {% else %}
+            <span class="bg-slate-800 border border-slate-700 text-slate-600 px-4 py-2 rounded cursor-not-allowed">{{
+                _('Previous') }}</span>
+            {% endif %}
+
+            {% if paginated_data['pa_has_next'] %}
+            <a href="{{ url_for('get_users_route', page=paginated_data['pa_next_num'], name=search_name, phone=search_phone, sub_id=search_sub_id) }}"
+                class="bg-slate-800 border border-slate-600 text-white px-4 py-2 rounded hover:bg-slate-700 transition">{{
+                _('Next') }}</a>
+            {% else %}
+            <span class="bg-slate-800 border border-slate-700 text-slate-600 px-4 py-2 rounded cursor-not-allowed">{{
+                _('Next') }}</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <!-- QR Modal -->

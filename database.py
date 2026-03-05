@@ -214,14 +214,27 @@ def check_access(user_id):
 
     return True, _("Access Granted"), "allowed", sub_name, count
 
-def get_all_users():
-    results = db.session.query(User, ActiveSubscription.end_date, SubscriptionType.name.label('sub_name'))\
+def get_users_paginated(page=1, per_page=50, search_name=None, search_phone=None, search_sub_id=None):
+    query = db.session.query(User, ActiveSubscription.end_date, SubscriptionType.name.label('sub_name'), SubscriptionType.id.label('sub_type_id'))\
         .outerjoin(ActiveSubscription, (User.id == ActiveSubscription.user_id) & (ActiveSubscription.end_date >= datetime.date.today()))\
-        .outerjoin(SubscriptionType, ActiveSubscription.type_id == SubscriptionType.id)\
-        .all()
+        .outerjoin(SubscriptionType, ActiveSubscription.type_id == SubscriptionType.id)
+        
+    if search_name:
+        query = query.filter(User.name.ilike(f"%{search_name}%"))
+    if search_phone:
+        query = query.filter(User.phone.ilike(f"%{search_phone}%"))
+        
+    if search_sub_id:
+        if search_sub_id == 'none':
+            query = query.filter(ActiveSubscription.id == None)
+        else:
+            query = query.filter(SubscriptionType.id == search_sub_id)
+            
+    query = query.order_by(User.id.desc())
+    paginated = query.paginate(page=page, per_page=per_page, error_out=False)
         
     users = []
-    for user, end_date, sub_name in results:
+    for user, end_date, sub_name, sub_type_id in paginated.items:
         u_dict = dict_helper(user)
         
         user_classes = db.session.query(ClassSchedule.name)\
@@ -241,7 +254,17 @@ def get_all_users():
             u_dict['sub_name'] = sub_name
             
         users.append(u_dict)
-    return users
+        
+    return {
+        'items': users,
+        'pa_total': paginated.total,
+        'pa_pages': paginated.pages,
+        'pa_page': paginated.page,
+        'pa_has_next': paginated.has_next,
+        'pa_has_prev': paginated.has_prev,
+        'pa_next_num': paginated.next_num,
+        'pa_prev_num': paginated.prev_num
+    }
 
 def get_user_by_id(user_id):
     user = User.query.get(user_id)
