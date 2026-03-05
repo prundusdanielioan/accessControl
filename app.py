@@ -156,7 +156,7 @@ def delete_user(user_id):
     return redirect(url_for('get_users'))
 
 @app.route('/log/<int:log_id>/delete', methods=['POST'])
-def delete_log(log_id):
+def delete_user_log(log_id):
     database.delete_access_log(log_id)
     # Redirect back to where the user came from (profile or admin dashboard)
     return redirect(request.referrer or url_for('admin'))
