@@ -113,6 +113,25 @@ def get_users():
     users = database.get_all_users()
     return render_template('users.html', users=users)
 
+@app.route('/user/<int:user_id>')
+def user_profile(user_id):
+    user = database.get_user_by_id(user_id)
+    if not user:
+        return redirect(url_for('get_users'))
+        
+    sub = database.get_active_subscription(user_id)
+    stats = database.get_user_stats(user_id)
+    logs = database.get_user_logs(user_id, limit=50)
+    
+    # Also fetch enrolled classes manually here for display
+    user_classes = database.db.session.query(database.ClassSchedule)\
+        .join(database.ClassParticipant, database.ClassParticipant.class_id == database.ClassSchedule.id)\
+        .filter(database.ClassParticipant.user_id == user_id)\
+        .all()
+    classes = [database.dict_helper(c) for c in user_classes]
+    
+    return render_template('user_profile.html', user=user, sub=sub, stats=stats, logs=logs, classes=classes)
+
 @app.route('/user/<int:user_id>/edit', methods=['GET', 'POST'])
 def edit_user(user_id):
     if request.method == 'POST':

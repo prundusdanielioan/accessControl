@@ -427,3 +427,37 @@ def get_class_stats():
             'percentage': round(pct)
         })
     return stats
+
+def get_user_stats(user_id):
+    today = datetime.date.today()
+    # Total visits
+    total_visits = db.session.query(db.func.count(AccessLog.id))\
+        .filter(AccessLog.user_id == user_id)\
+        .filter(AccessLog.allowed == True)\
+        .scalar()
+        
+    # Visits this month
+    monthly_visits = db.session.query(db.func.count(AccessLog.id))\
+        .filter(AccessLog.user_id == user_id)\
+        .filter(AccessLog.allowed == True)\
+        .filter(db.extract('year', AccessLog.timestamp) == today.year)\
+        .filter(db.extract('month', AccessLog.timestamp) == today.month)\
+        .scalar()
+        
+    return {
+        'total_visits': total_visits,
+        'monthly_visits': monthly_visits
+    }
+
+def get_user_logs(user_id, limit=100):
+    logs = AccessLog.query.filter_by(user_id=user_id)\
+        .order_by(AccessLog.timestamp.desc())\
+        .limit(limit).all()
+        
+    logs_list = []
+    for log in logs:
+        l_dict = dict_helper(log)
+        if hasattr(l_dict['timestamp'], 'strftime'):
+            l_dict['timestamp'] = l_dict['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
+        logs_list.append(l_dict)
+    return logs_list

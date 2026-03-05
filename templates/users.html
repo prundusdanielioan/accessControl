@@ -24,7 +24,12 @@
             <tbody class="divide-y divide-slate-700">
                 {% for user in users %}
                 <tr class="hover:bg-slate-700/50 transition">
-                    <td class="p-4 font-semibold text-white">{{ user['name'] }}</td>
+                    <td class="p-4 font-semibold">
+                        <a href="/user/{{ user['id'] }}"
+                            class="text-indigo-400 hover:text-indigo-300 underline underline-offset-4 decoration-indigo-500/50 hover:decoration-indigo-400 transition">
+                            {{ user['name'] }}
+                        </a>
+                    </td>
                     <td class="p-4 text-slate-300">{{ user['phone'] }}</td>
                     <td class="p-4 text-slate-400 font-mono text-sm">
                         <div class="flex items-center gap-2">

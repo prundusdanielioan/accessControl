@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+
+    <div class="flex items-center gap-4 mb-4">
+        <a href="/users" class="text-slate-400 hover:text-white transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
+        <h1 class="text-3xl font-bold text-emerald-400">{{ _('User Profile') }}</h1>
+    </div>
+
+    <!-- Personal Profile Card -->
+    <div
+        class="bg-slate-800 rounded-lg shadow-xl p-8 border border-slate-700 md:flex md:justify-between md:items-start">
+        <div>
+            <h2 class="text-2xl font-bold text-white mb-2">{{ user['name'] }}</h2>
+            <div class="space-y-2 text-slate-300">
+                <p class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path
+                            d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    </svg>
+                    {{ user['phone'] }}
+                </p>
+                <p class="flex items-center gap-2 font-mono text-sm text-amber-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    TAG: {{ user['rfid_tag'] }}
+                </p>
+                <div class="mt-4 pt-4 border-t border-slate-700">
+                    <p class="font-semibold text-slate-400 mb-1">{{ _('Active Plan:') }}</p>
+                    {% if sub %}
+                    <span
+                        class="bg-emerald-900/50 text-emerald-400 px-3 py-1 rounded-full text-sm font-bold border border-emerald-900 shadow-sm inline-block">
+                        {{ _(sub['sub_name']) }} ({{ _('Expires:') }} {{ sub.end_date.strftime('%Y-%m-%d') if
+                        sub.end_date.strftime else sub.end_date }})
+                    </span>
+                    {% else %}
+                    <span class="text-rose-400 text-sm font-semibold">{{ _('No Standard Subscriptions Active') }}</span>
+                    {% endif %}
+                </div>
+
+                {% if classes %}
+                <div class="mt-4">
+                    <p class="font-semibold text-slate-400 mb-2">{{ _('Enrolled Classes:') }}</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for c in classes %}
+                        {% set days = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'] %}
+                        <span
+                            class="bg-indigo-900/50 text-indigo-400 border border-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
+                            {{ c['name'] }} ({{ days[c['day_of_week']] }} {{ c['start_time'][:5] if c['start_time'] is
+                            string else c['start_time'] }})
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-6 md:mt-0 flex gap-4">
+            <a href="/user/{{ user['id'] }}/edit"
+                class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold transition shadow-md">
+                {{ _('Edit User') }}
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-700 flex items-center justify-between">
+            <div>
+                <p class="text-slate-400 font-semibold mb-1 uppercase tracking-wider text-xs">{{ _('Total Lifetime
+                    Visits') }}</p>
+                <p class="text-3xl font-black text-white">{{ stats['total_visits'] }}</p>
+            </div>
+            <div class="p-3 bg-emerald-900/30 rounded-full text-emerald-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+            </div>
+        </div>
+        <div class="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-700 flex items-center justify-between">
+            <div>
+                <p class="text-slate-400 font-semibold mb-1 uppercase tracking-wider text-xs">{{ _('Visits This Month')
+                    }}</p>
+                <p class="text-3xl font-black text-white">{{ stats['monthly_visits'] }}</p>
+            </div>
+            <div class="p-3 bg-indigo-900/30 rounded-full text-indigo-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline History -->
+    <div class="bg-slate-800 rounded-lg shadow-xl overflow-hidden border border-slate-700">
+        <div class="p-6 border-b border-slate-700">
+            <h2 class="text-xl font-bold text-slate-300">{{ _('Access History Timeline') }}</h2>
+        </div>
+        <div class="p-6 max-h-[500px] overflow-y-auto">
+            {% if logs %}
+            <div class="relative border-l border-slate-600 ml-3 space-y-6">
+                {% for log in logs %}
+                <div class="mb-8 ml-6 relative">
+                    <span
+                        class="absolute flex items-center justify-center w-6 h-6 rounded-full -left-9 ring-4 ring-slate-800 {% if log['allowed'] %}bg-emerald-500{% else %}bg-rose-500{% endif %}">
+                        {% if log['allowed'] %}
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        {% endif %}
+                    </span>
+                    <h3 class="flex items-center mb-1 text-md font-semibold text-white">
+                        {{ log['timestamp'] }}
+                    </h3>
+                    <p class="mb-1 text-sm font-normal text-slate-400">{{ _(log['reason']) }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-slate-500 italic text-center py-4">{{ _('No access history available for this user.') }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
