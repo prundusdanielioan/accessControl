@@ -82,7 +82,8 @@ def register():
         name = request.form['name']
         phone = request.form['phone']
         rfid_tag = request.form['rfid_tag']
-        sub_type_id = request.form['subscription_type']
+        sub_type_id = request.form.get('subscription_type')
+        class_id = request.form.get('class_id')
         
         # Check if user exists
         existing_user = database.get_user_by_rfid(rfid_tag)
@@ -91,17 +92,21 @@ def register():
 
         user_id = database.create_user(name, phone, rfid_tag)
         if user_id:
-            database.assign_subscription(user_id, sub_type_id)
+            if sub_type_id:
+                database.assign_subscription(user_id, sub_type_id)
+            if class_id:
+                database.enroll_user_in_class(user_id, class_id)
             return redirect(url_for('index'))
         else:
              return render_template('register.html', error="Error creating user (Phone might use used).")
 
-    # Get subscription types for dropdown
+    # Get subscription types and classes for dropdowns
     sub_types = database.SubscriptionType.query.all()
+    classes = database.get_all_classes()
     
     rfid_prefill = request.args.get('rfid', '')
     
-    return render_template('register.html', sub_types=sub_types, rfid_prefill=rfid_prefill)
+    return render_template('register.html', sub_types=sub_types, classes=classes, rfid_prefill=rfid_prefill)
 
 @app.route('/users')
 def get_users():
@@ -145,12 +150,45 @@ def admin():
         if hasattr(l_dict['timestamp'], 'strftime'):
             l_dict['timestamp'] = l_dict['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
         logs.append(l_dict)
+
+    subscription_types = database.SubscriptionType.query.all()
+    classes = database.get_all_classes()
         
-    return render_template('admin.html', logs=logs)
+    return render_template('admin.html', logs=logs, subscription_types=subscription_types, classes=classes)
 
 @app.route('/admin/log/<int:log_id>/delete', methods=['POST'])
 def delete_log(log_id):
     database.delete_log(log_id)
+    return redirect(url_for('admin'))
+
+@app.route('/admin/subscription_types', methods=['POST'])
+def create_subscription_type():
+    name = request.form.get('name')
+    entries_per_week = request.form.get('entries_per_week')
+    duration_days = request.form.get('duration_days')
+    price = request.form.get('price')
+    
+    database.create_subscription_type(name, entries_per_week, duration_days, price)
+    return redirect(url_for('admin'))
+
+@app.route('/admin/subscription_types/<int:type_id>/delete', methods=['POST'])
+def delete_subscription_type(type_id):
+    database.delete_subscription_type(type_id)
+    return redirect(url_for('admin'))
+
+@app.route('/admin/classes', methods=['POST'])
+def create_class_schedule():
+    name = request.form.get('name')
+    day_of_week = request.form.get('day_of_week')
+    start_time = request.form.get('start_time')
+    capacity = request.form.get('capacity')
+    
+    database.create_class_schedule(name, day_of_week, start_time, capacity)
+    return redirect(url_for('admin'))
+
+@app.route('/admin/classes/<int:class_id>/delete', methods=['POST'])
+def delete_class_schedule(class_id):
+    database.delete_class_schedule(class_id)
     return redirect(url_for('admin'))
 
 import webview

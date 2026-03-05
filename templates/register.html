@@ -30,21 +30,39 @@
             <p class="text-xs text-slate-500 mt-1">{{ _('Click the field and scan the card.') }}</p>
         </div>
 
-        <div>
-            <label class="block text-slate-400 mb-2">{{ _('Select Subscription') }}</label>
-            <select name="subscription_type"
-                class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
-                {% for sub in sub_types %}
-                <option value="{{ sub['id'] }}">
-                    {{ _(sub['name']) }}
-                    {% if sub['entries_per_week'] %}
-                    ({{ sub['entries_per_week'] }} {{ _('entries/week') }})
-                    {% else %}
-                    ({{ _('Unlimited') }})
-                    {% endif %}
-                </option>
-                {% endfor %}
-            </select>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-slate-400 mb-2">{{ _('Select Subscription (Optional)') }}</label>
+                <select name="subscription_type"
+                    class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+                    <option value="">-- {{ _('None') }} --</option>
+                    {% for sub in sub_types %}
+                    <option value="{{ sub['id'] }}">
+                        {{ _(sub['name']) }}
+                        {% if sub['entries_per_week'] %}
+                        ({{ sub['entries_per_week'] }} {{ _('entries/week') }})
+                        {% else %}
+                        ({{ _('Unlimited') }})
+                        {% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-slate-400 mb-2">{{ _('Select Class (Optional)') }}</label>
+                <select name="class_id"
+                    class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 transition">
+                    <option value="">-- {{ _('None') }} --</option>
+                    {% for c in classes %}
+                    <option value="{{ c['id'] }}">
+                        {{ c['name'] }} -
+                        {% set days = [_('Mon'), _('Tue'), _('Wed'), _('Thu'), _('Fri'), _('Sat'), _('Sun')] %}
+                        {{ days[c['day_of_week']] }} {{ c['start_time'] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
 
         <button type="submit"

@@ -36,6 +36,21 @@ class AccessLog(db.Model):
     allowed = db.Column(db.Boolean, nullable=False)
     reason = db.Column(db.String)
 
+class ClassSchedule(db.Model):
+    __tablename__ = 'class_schedules'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    day_of_week = db.Column(db.Integer, nullable=False) # 0=Monday, 6=Sunday
+    start_time = db.Column(db.String(5), nullable=False) # Format: HH:MM
+    capacity = db.Column(db.Integer)
+
+class ClassParticipant(db.Model):
+    __tablename__ = 'class_participants'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    class_id = db.Column(db.Integer, db.ForeignKey('class_schedules.id'), nullable=False)
+    enrolled_at = db.Column(db.DateTime, default=datetime.datetime.now)
+
 def init_db(app):
     with app.app_context():
         db.create_all()
@@ -71,6 +86,9 @@ def create_user(name, phone, rfid_tag):
         return None
 
 def assign_subscription(user_id, type_id):
+    if not type_id:
+        return False
+        
     sub_type = SubscriptionType.query.get(type_id)
     if not sub_type:
         return False
@@ -87,6 +105,25 @@ def assign_subscription(user_id, type_id):
     db.session.add(sub)
     db.session.commit()
     return True
+
+def enroll_user_in_class(user_id, class_id):
+    try:
+        if not class_id:
+            return False
+            
+        # Check if already enrolled
+        existing = ClassParticipant.query.filter_by(user_id=user_id, class_id=class_id).first()
+        if existing:
+            return True
+            
+        participant = ClassParticipant(user_id=user_id, class_id=class_id)
+        db.session.add(participant)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error enrolling user in class: {e}")
+        db.session.rollback()
+        return False
 
 def log_access(user_id, allowed, reason):
     log = AccessLog(user_id=user_id, allowed=allowed, reason=reason)
@@ -113,10 +150,58 @@ def check_access(user_id):
         .count()
 
     if not subscription_data:
-        return False, _("No active subscription found."), "denied", None, count
+        # Check all enrolled classes for this user
+        all_enrolled = db.session.query(ClassSchedule)\
+            .join(ClassParticipant, ClassParticipant.class_id == ClassSchedule.id)\
+            .filter(ClassParticipant.user_id == user_id)\
+            .all()
+            
+        if not all_enrolled:
+            return False, _("No active subscription or class found."), "denied", None, count
+            
+        # Check if any class is scheduled for today
+        current_day_of_week = today.weekday()
+        classes_today = [c for c in all_enrolled if c.day_of_week == current_day_of_week]
+        
+        if classes_today:
+            now = datetime.datetime.now()
+            valid_classes_now = []
+            
+            for c in classes_today:
+                try:
+                    h, m = map(int, c.start_time.split(':'))
+                    dt_class = datetime.datetime.combine(today, datetime.time(h, m))
+                    
+                    # Allowed window: 60 mins before class, up to 30 mins after
+                    if (dt_class - datetime.timedelta(minutes=60)) <= now <= (dt_class + datetime.timedelta(minutes=30)):
+                        valid_classes_now.append(c)
+                except Exception:
+                    # Fallback if time format is unexpected
+                    valid_classes_now.append(c)
+                    
+            if valid_classes_now:
+                class_names_today = ", ".join([c.name for c in valid_classes_now])
+                return True, _("Access Granted for Class: %(classes)s", classes=class_names_today), "allowed", class_names_today, count
+            else:
+                class_details = ", ".join([f"{c.name} ({c.start_time})" for c in classes_today])
+                return False, _("Access Denied. Next class today at: %(details)s", details=class_details), "denied", class_details, count
+            
+        # If they have classes but none today
+        class_names_all = ", ".join([c.name for c in all_enrolled])
+        return False, _("Access Denied. Your classes (%(classes)s) are not scheduled for today.", classes=class_names_all), "denied", class_names_all, count
         
     sub, sub_type = subscription_data
     sub_name = sub_type.name
+
+    # Append any enrolled classes to the sub_name for display
+    user_classes = db.session.query(ClassSchedule.name)\
+        .join(ClassParticipant, ClassParticipant.class_id == ClassSchedule.id)\
+        .filter(ClassParticipant.user_id == user_id)\
+        .all()
+    class_names = [c[0] for c in user_classes]
+    
+    if class_names:
+        sub_name = f"{sub_name} + {', '.join(class_names)}"
 
     if sub_type.entries_per_week:
         if count >= sub_type.entries_per_week:
@@ -138,11 +223,23 @@ def get_all_users():
     users = []
     for user, end_date, sub_name in results:
         u_dict = dict_helper(user)
+        
+        user_classes = db.session.query(ClassSchedule.name)\
+            .join(ClassParticipant, ClassParticipant.class_id == ClassSchedule.id)\
+            .filter(ClassParticipant.user_id == user.id)\
+            .all()
+        class_names = [c[0] for c in user_classes]
+
         if end_date and isinstance(end_date, datetime.date):
             u_dict['end_date'] = end_date.strftime('%Y-%m-%d')
         else:
             u_dict['end_date'] = end_date
-        u_dict['sub_name'] = sub_name
+            
+        if class_names:
+            u_dict['sub_name'] = f"{sub_name} + {', '.join(class_names)}" if sub_name else ", ".join(class_names)
+        else:
+            u_dict['sub_name'] = sub_name
+            
         users.append(u_dict)
     return users
 
@@ -226,3 +323,71 @@ def get_last_log(user_id):
     except Exception as e:
         print(f"Error fetching last log: {e}")
     return None
+
+def create_subscription_type(name, entries_per_week, duration_days, price):
+    try:
+        entries = int(entries_per_week) if entries_per_week else None
+        sub_type = SubscriptionType(
+            name=name,
+            entries_per_week=entries,
+            duration_days=int(duration_days),
+            price=float(price)
+        )
+        db.session.add(sub_type)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error creating subscription type: {e}")
+        db.session.rollback()
+        return False
+
+def delete_subscription_type(type_id):
+    try:
+        # Prevent deletion if active subscriptions exist
+        active_subs = ActiveSubscription.query.filter_by(type_id=type_id).first()
+        if active_subs:
+            return False, _("Cannot delete. There are active users with this subscription.")
+        
+        SubscriptionType.query.filter_by(id=type_id).delete()
+        db.session.commit()
+        return True, _("Subscription type deleted.")
+    except Exception as e:
+        print(f"Error deleting subscription type: {e}")
+        db.session.rollback()
+        return False, _("Error deleting subscription type.")
+
+def create_class_schedule(name, day_of_week, start_time, capacity):
+    try:
+        # Validate time format loosely
+        if ':' not in start_time or len(start_time) > 5:
+            start_time = "00:00"
+            
+        cap = int(capacity) if capacity else None
+        
+        new_class = ClassSchedule(
+            name=name,
+            day_of_week=int(day_of_week),
+            start_time=start_time,
+            capacity=cap
+        )
+        db.session.add(new_class)
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error creating class schedule: {e}")
+        db.session.rollback()
+        return False
+
+def get_all_classes():
+    classes = ClassSchedule.query.order_by(ClassSchedule.day_of_week, ClassSchedule.start_time).all()
+    return [dict_helper(c) for c in classes]
+
+def delete_class_schedule(class_id):
+    try:
+        ClassSchedule.query.filter_by(id=class_id).delete()
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error deleting class schedule: {e}")
+        db.session.rollback()
+        return False

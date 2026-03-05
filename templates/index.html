@@ -52,23 +52,30 @@
             });
             const data = await response.json();
 
-            const pkgInfo = data.sub_name ? ` [${data.sub_name}]` : '';
+            let pkgInfo = '';
+            if (data.sub_name) {
+                pkgInfo = `
+                <div class="mt-6 text-4xl font-bold bg-black/20 py-3 px-6 rounded-xl inline-block border border-white/10 shadow-inner">
+                    🏷️ ${data.sub_name}
+                </div>`;
+            }
+
             const countInfo = data.weekly_count !== undefined ? ` ({{ _('This week:') }} ${data.weekly_count} {{ _('scans') }})` : '';
 
             let lastAttemptInfo = '';
             if (data.last_attempt) {
                 const statusStr = data.last_attempt.allowed ? "{{ _('Allowed') }}" : `{{ _('Denied') }} (${data.last_attempt.reason})`;
-                lastAttemptInfo = `<br><span class="text-xs font-normal opacity-80 mt-2 block tracking-wider uppercase">{{ _('Last Attempt:') }} ${data.last_attempt.timestamp} - ${statusStr}</span>`;
+                lastAttemptInfo = `<br><span class="text-xs font-normal opacity-80 mt-4 block tracking-wider uppercase">{{ _('Last Attempt:') }} ${data.last_attempt.timestamp} - ${statusStr}</span>`;
             }
 
             if (data.status === 'allowed') {
-                updateStatus("{{ _('ACCESS GRANTED') }}", `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'emerald');
+                updateStatus("{{ _('ACCESS GRANTED') }}", `${data.user_name} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'emerald');
                 playAudio('success');
             } else if (data.status === 'warning') {
-                updateStatus("{{ _('ACCESS GRANTED') }}", `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'yellow');
+                updateStatus("{{ _('ACCESS GRANTED') }}", `${data.user_name} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'yellow');
                 playAudio('warning');
             } else if (data.status === 'denied') {
-                updateStatus("{{ _('ACCESS DENIED') }}", `${data.user_name} - ${data.message}${pkgInfo}${countInfo}${lastAttemptInfo}`, 'red');
+                updateStatus("{{ _('ACCESS DENIED') }}", `${data.user_name} - ${data.message}${countInfo}${pkgInfo}${lastAttemptInfo}`, 'red');
                 playAudio('error');
             } else if (data.status === 'unknown') {
                 updateStatus("{{ _('UNKNOWN USER') }}", `{{ _('Card:') }} ${rfid}`, 'amber');
