@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AccessControl – Smart RFID Access Management</title>
+  <meta name="description" content="A modern Flask-powered access control system for managing member subscriptions, RFID scanning, and access logs. Perfect for gyms, coworking spaces, and any facility." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --emerald: #10b981;
+      --emerald-dark: #059669;
+      --emerald-glow: rgba(16,185,129,0.15);
+      --slate-950: #020617;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --white: #ffffff;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --indigo: #6366f1;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--slate-950);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--slate-900); }
+    ::-webkit-scrollbar-thumb { background: var(--slate-700); border-radius: 3px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(2,6,23,0.8);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s ease;
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-logo .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--slate-400); text-decoration: none; font-size: 0.875rem;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: var(--emerald); color: var(--slate-950) !important;
+      padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 700 !important;
+      font-size: 0.875rem !important;
+    }
+    .nav-cta:hover { background: var(--emerald-dark) !important; color: var(--white) !important; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding: 8rem 2rem 4rem;
+    }
+
+    .hero-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-glow {
+      position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(16,185,129,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 900px; text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
+      color: var(--emerald); padding: 0.4rem 1rem; border-radius: 100px;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px;
+      text-transform: uppercase; margin-bottom: 1.75rem;
+      animation: fadeInDown 0.6s ease both;
+    }
+    .hero-badge .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--emerald); animation: pulse 2s infinite; }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -2px;
+      margin-bottom: 1.5rem;
+      animation: fadeInDown 0.7s ease 0.1s both;
+    }
+    .hero-title .accent { color: var(--emerald); }
+
+    .hero-subtitle {
+      font-size: 1.15rem; color: var(--slate-400); line-height: 1.75;
+      max-width: 620px; margin: 0 auto 2.5rem;
+      animation: fadeInDown 0.7s ease 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1rem; flex-wrap: wrap;
+      animation: fadeInDown 0.7s ease 0.3s both;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--emerald); color: var(--slate-950);
+      padding: 0.85rem 2rem; border-radius: 10px;
+      font-weight: 700; font-size: 0.95rem; text-decoration: none;
+      transition: all 0.2s ease; box-shadow: 0 4px 24px rgba(16,185,129,0.3);
+    }
+    .btn-primary:hover { background: var(--emerald-dark); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(16,185,129,0.4); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.06); color: var(--white);
+      padding: 0.85rem 2rem; border-radius: 10px;
+      font-weight: 600; font-size: 0.95rem; text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+    /* ── STATUS DEMO ── */
+    .hero-demo {
+      position: relative; z-index: 2;
+      margin-top: 4rem;
+      display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+      flex-wrap: wrap;
+      animation: fadeInDown 0.7s ease 0.5s both;
+    }
+
+    .status-card {
+      background: var(--slate-800);
+      border: 2px solid var(--slate-700);
+      border-radius: 16px; padding: 1.5rem 2.5rem;
+      text-align: center; min-width: 200px;
+      transition: all 0.3s ease; cursor: default;
+    }
+    .status-card:hover { transform: translateY(-4px); }
+    .status-card.granted { border-color: var(--emerald); background: rgba(16,185,129,0.07); box-shadow: 0 0 30px rgba(16,185,129,0.15); }
+    .status-card.denied  { border-color: var(--red); background: rgba(239,68,68,0.07); box-shadow: 0 0 30px rgba(239,68,68,0.15); }
+    .status-card.unknown { border-color: var(--amber); background: rgba(245,158,11,0.07); box-shadow: 0 0 30px rgba(245,158,11,0.15); }
+
+    .status-card .status-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .status-card.granted .status-label { color: var(--emerald); }
+    .status-card.denied  .status-label { color: var(--red); }
+    .status-card.unknown .status-label { color: var(--amber); }
+    .status-card .status-name { font-size: 1.1rem; font-weight: 700; color: var(--white); }
+    .status-card .status-pkg  { font-size: 0.8rem; color: var(--slate-400); margin-top: 0.25rem; }
+
+    /* ── SECTION COMMONS ── */
+    section { padding: 6rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-badge {
+      display: inline-block; color: var(--emerald);
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800; letter-spacing: -1px; line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .section-subtitle {
+      font-size: 1rem; color: var(--slate-400); line-height: 1.75;
+      max-width: 540px;
+    }
+
+    /* ── FEATURES ── */
+    #features { background: var(--slate-900); }
+
+    .features-header { text-align: center; margin-bottom: 4rem; }
+    .features-header .section-subtitle { margin: 0 auto; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--slate-800);
+      border: 1px solid var(--slate-700);
+      border-radius: 16px; padding: 2rem;
+      transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--emerald), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(16,185,129,0.3); box-shadow: 0 16px 48px rgba(0,0,0,0.3); }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px; margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+    }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p  { font-size: 0.875rem; color: var(--slate-400); line-height: 1.65; }
+
+    /* ── HOW IT WORKS ── */
+    #how-it-works { background: var(--slate-950); }
+    .how-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    @media (max-width: 768px) { .how-grid { grid-template-columns: 1fr; gap: 3rem; } }
+
+    .steps { display: flex; flex-direction: column; gap: 2rem; }
+    .step { display: flex; gap: 1.25rem; align-items: flex-start; }
+    .step-num {
+      flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(16,185,129,0.12); border: 2px solid var(--emerald);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.9rem; color: var(--emerald);
+    }
+    .step-content h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .step-content p  { font-size: 0.875rem; color: var(--slate-400); line-height: 1.65; }
+
+    /* Dashboard mockup */
+    .dashboard-mockup {
+      background: var(--slate-800); border-radius: 20px;
+      border: 1px solid var(--slate-700); overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    }
+    .mockup-topbar {
+      background: var(--slate-900); padding: 0.85rem 1.25rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      border-bottom: 1px solid var(--slate-700);
+    }
+    .mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mockup-topbar span { font-size: 0.75rem; color: var(--slate-400); margin-left: auto; }
+    .mockup-body { padding: 1.5rem; }
+
+    .mockup-scan-area {
+      background: var(--slate-900); border-radius: 14px;
+      border: 2px solid var(--emerald); padding: 2rem;
+      text-align: center; margin-bottom: 1.25rem;
+      box-shadow: 0 0 24px rgba(16,185,129,0.12);
+    }
+    .mockup-scan-title { font-size: 1.6rem; font-weight: 900; color: var(--emerald); margin-bottom: 0.3rem; }
+    .mockup-scan-name  { font-size: 0.9rem; color: var(--slate-300); }
+    .mockup-scan-sub   { font-size: 0.8rem; color: var(--slate-400); margin-top: 0.25rem; }
+
+    .mockup-stats {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;
+    }
+    .mockup-stat {
+      background: var(--slate-900); border-radius: 10px; padding: 0.85rem;
+      text-align: center; border: 1px solid var(--slate-700);
+    }
+    .mockup-stat .val { font-size: 1.3rem; font-weight: 800; color: var(--white); }
+    .mockup-stat .lbl { font-size: 0.7rem; color: var(--slate-400); margin-top: 0.1rem; }
+
+    /* ── APP PREVIEW ── */
+    #preview { background: var(--slate-950); }
+    .preview-header { text-align: center; margin-bottom: 3rem; }
+    .preview-header .section-subtitle { margin: 0 auto; }
+
+    .screen-tabs {
+      display: flex; gap: 0.5rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .screen-tab {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.25rem; border-radius: 8px; cursor: pointer;
+      font-size: 0.85rem; font-weight: 600;
+      border: 1px solid var(--slate-700);
+      background: var(--slate-800); color: var(--slate-400);
+      transition: all 0.2s ease; user-select: none;
+    }
+    .screen-tab:hover { color: var(--white); border-color: var(--slate-500); }
+    .screen-tab.active {
+      background: rgba(16,185,129,0.12); border-color: var(--emerald);
+      color: var(--emerald);
+    }
+
+    .screen-panel {
+      display: none; animation: fadeInDown 0.35s ease both;
+    }
+    .screen-panel.active { display: block; }
+
+    .screen-frame {
+      background: var(--slate-900); border-radius: 16px;
+      border: 1px solid var(--slate-700); overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+    .screen-frame-bar {
+      background: var(--slate-800); padding: 0.75rem 1.25rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      border-bottom: 1px solid var(--slate-700);
+    }
+    .screen-frame-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .screen-frame-bar .url-bar {
+      margin-left: 0.75rem; background: var(--slate-900);
+      border-radius: 6px; padding: 0.3rem 0.75rem;
+      font-size: 0.72rem; color: var(--slate-500); flex: 1; max-width: 320px;
+    }
+    .screen-frame img {
+      width: 100%; height: auto; display: block;
+    }
+
+    .screen-caption {
+      margin-top: 1.5rem; text-align: center;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem;
+    }
+    .screen-caption-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.82rem; color: var(--slate-400);
+    }
+    .screen-caption-item .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); }
+
+    /* ── TECH STACK ── */
+    #tech { background: var(--slate-900); }
+    .tech-header { text-align: center; margin-bottom: 3.5rem; }
+    .tech-pills {
+      display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+    }
+    .tech-pill {
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--slate-800); border: 1px solid var(--slate-700);
+      border-radius: 100px; padding: 0.6rem 1.25rem;
+      font-size: 0.875rem; font-weight: 600; color: var(--slate-300);
+      transition: all 0.2s ease;
+    }
+    .tech-pill:hover { border-color: var(--emerald); color: var(--white); transform: scale(1.04); }
+    .tech-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ── SETUP ── */
+    #setup { background: var(--slate-950); }
+    .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    @media (max-width: 768px) { .setup-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    .code-block {
+      background: #0d1117; border-radius: 14px;
+      border: 1px solid var(--slate-700); overflow: hidden;
+      font-family: 'Fira Code', 'Courier New', monospace;
+    }
+    .code-block-header {
+      background: var(--slate-800); padding: 0.75rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--slate-700);
+    }
+    .code-block-header span { font-size: 0.78rem; color: var(--slate-400); font-family: 'Inter', sans-serif; }
+    .code-block pre {
+      padding: 1.5rem 1.25rem; font-size: 0.82rem; line-height: 1.8;
+      overflow-x: auto; color: var(--slate-300);
+    }
+    .code-block .c-green { color: #7ee787; }
+    .code-block .c-blue  { color: #79c0ff; }
+    .code-block .c-gray  { color: #8b949e; }
+
+    /* ── CTA ── */
+    #cta {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(99,102,241,0.05) 100%);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+    }
+    #cta .section-title { font-size: clamp(2rem, 5vw, 3.2rem); }
+    #cta .section-subtitle { margin: 0 auto 2.5rem; }
+    .cta-glow {
+      position: relative; display: inline-block;
+    }
+    .cta-glow::before {
+      content: ''; position: absolute; inset: -24px;
+      background: radial-gradient(ellipse, rgba(16,185,129,0.25), transparent 60%);
+      pointer-events: none; border-radius: 50%;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--slate-950); padding: 2.5rem 2rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    footer .logo { font-size: 1rem; font-weight: 800; color: var(--white); opacity: 0.7; }
+    footer p { font-size: 0.8rem; color: var(--slate-600); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: 0.8rem; color: var(--slate-500); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--emerald); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+    @keyframes scanLine {
+      0%   { top: 0; }
+      100% { top: 100%; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .float-anim { animation: float 4s ease-in-out infinite; }
+
+    /* ── REVEAL ON SCROLL ── */
+    .reveal {
+      opacity: 0; transform: translateY(30px); transition: all 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      nav .nav-links { display: none; }
+      .hero-demo { flex-direction: column; align-items: center; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <div class="logo-icon">🔐</div>
+    AccessControl
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How it Works</a></li>
+    <li><a href="#preview">Screenshots</a></li>
+    <li><a href="#tech">Tech Stack</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="https://github.com/prundusdanielioan/accessControl" target="_blank" class="nav-cta">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+
+  <div style="position:relative; z-index:2; width:100%; max-width:1000px; margin:0 auto; text-align:center;">
+    <div class="hero-badge">
+      <div class="pulse"></div>
+      Open Source · Flask · Python
+    </div>
+
+    <h1 class="hero-title">
+      Smart Access Control<br/>
+      <span class="accent">Powered by RFID</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      A complete, self-hosted access management system. Manage members, subscriptions, 
+      and track every entry or denial in real time — with a beautiful, responsive interface.
+    </p>
+
+    <div class="hero-actions">
+      <a href="https://github.com/prundusdanielioan/accessControl" target="_blank" class="btn-primary">
+        ⭐ View on GitHub
+      </a>
+      <a href="#how-it-works" class="btn-secondary">
+        See how it works →
+      </a>
+    </div>
+
+    <!-- Live status demo -->
+    <div class="hero-demo">
+      <div class="status-card granted float-anim" style="animation-delay:0s">
+        <div class="status-label">✅ Access Granted</div>
+        <div class="status-name">John Doe</div>
+        <div class="status-pkg">🏷️ Unlimited Plan</div>
+      </div>
+      <div class="status-card denied float-anim" style="animation-delay:0.5s">
+        <div class="status-label">❌ Access Denied</div>
+        <div class="status-name">Jane Smith</div>
+        <div class="status-pkg">Subscription Expired</div>
+      </div>
+      <div class="status-card unknown float-anim" style="animation-delay:1s">
+        <div class="status-label">⚠️ Unknown Card</div>
+        <div class="status-name">RFID: 4A2C9F</div>
+        <div class="status-pkg">Register to grant access</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── APP PREVIEW ── -->
+<section id="preview">
+  <div class="container">
+    <div class="preview-header reveal">
+      <div class="section-badge">App Preview</div>
+      <h2 class="section-title">See it in action</h2>
+      <p class="section-subtitle">Real screenshots from the desktop application — running on Windows &amp; macOS via PyWebView.</p>
+    </div>
+
+    <div class="screen-tabs" id="screenTabs">
+      <button class="screen-tab active" data-tab="admin" id="tab-admin">🖥️ Admin Dashboard</button>
+      <button class="screen-tab" data-tab="members" id="tab-members">👥 Members List</button>
+      <button class="screen-tab" data-tab="denied" id="tab-denied">🚫 Access Denied</button>
+    </div>
+
+    <!-- Tab: Admin Dashboard -->
+    <div class="screen-panel active reveal" id="panel-admin">
+      <div class="screen-frame">
+        <div class="screen-frame-bar">
+          <span class="dot" style="background:#ff5f57;"></span>
+          <span class="dot" style="background:#febc2e;"></span>
+          <span class="dot" style="background:#28c840;"></span>
+          <span class="url-bar">127.0.0.1:5000/admin</span>
+        </div>
+        <img src="static/admin_dashboard.png" alt="Admin Dashboard showing subscriptions, class occupancy, access logs and management forms" loading="lazy" />
+      </div>
+      <div class="screen-caption">
+        <div class="screen-caption-item"><span class="dot"></span> Active subscription stats &amp; member counts</div>
+        <div class="screen-caption-item"><span class="dot"></span> Class occupancy with progress bars</div>
+        <div class="screen-caption-item"><span class="dot"></span> Live access log with timestamps</div>
+        <div class="screen-caption-item"><span class="dot"></span> Manage subscription &amp; class types</div>
+      </div>
+    </div>
+
+    <!-- Tab: Members List -->
+    <div class="screen-panel reveal" id="panel-members">
+      <div class="screen-frame">
+        <div class="screen-frame-bar">
+          <span class="dot" style="background:#ff5f57;"></span>
+          <span class="dot" style="background:#febc2e;"></span>
+          <span class="dot" style="background:#28c840;"></span>
+          <span class="url-bar">127.0.0.1:5000/users</span>
+        </div>
+        <img src="static/members_list.png" alt="Members List with filters for name, phone, subscription and class" loading="lazy" />
+      </div>
+      <div class="screen-caption">
+        <div class="screen-caption-item"><span class="dot"></span> Filter by name, phone, subscription or class</div>
+        <div class="screen-caption-item"><span class="dot"></span> View RFID tag &amp; subscription expiry</div>
+        <div class="screen-caption-item"><span class="dot"></span> Quick Edit / Delete actions per member</div>
+      </div>
+    </div>
+
+    <!-- Tab: Access Denied -->
+    <div class="screen-panel reveal" id="panel-denied">
+      <div class="screen-frame">
+        <div class="screen-frame-bar">
+          <span class="dot" style="background:#ff5f57;"></span>
+          <span class="dot" style="background:#febc2e;"></span>
+          <span class="dot" style="background:#28c840;"></span>
+          <span class="url-bar">127.0.0.1:5000/</span>
+        </div>
+        <img src="static/access_denied.png" alt="Access Denied screen — classes not scheduled for today" loading="lazy" />
+      </div>
+      <div class="screen-caption">
+        <div class="screen-caption-item"><span class="dot"></span> Instant visual feedback in large text</div>
+        <div class="screen-caption-item"><span class="dot"></span> Shows class name, scan count &amp; last attempt</div>
+        <div class="screen-caption-item"><span class="dot" style="background:var(--red);"></span> Clear denial reason — class not scheduled today</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section id="features">
+  <div class="container">
+    <div class="features-header reveal">
+      <div class="section-badge">Features</div>
+      <h2 class="section-title">Everything you need to manage access</h2>
+      <p class="section-subtitle">Built for gyms, coworking spaces, and any facility that needs reliable, automated entry control.</p>
+    </div>
+
+    <div class="features-grid">
+
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(16,185,129,0.12);">👥</div>
+        <h3>User Management</h3>
+        <p>Register members with their name, phone number, and RFID/QR card. Edit profiles, view stats, and manage everything from a clean admin panel.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(99,102,241,0.12);">📦</div>
+        <h3>Flexible Subscriptions</h3>
+        <p>Create custom subscription packages — unlimited, 3x/week, 2x/week, or anything in between. Set duration, weekly session caps, and pricing.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(245,158,11,0.12);">📡</div>
+        <h3>RFID & QR Scanning</h3>
+        <p>Works with physical RFID readers (acts as a keyboard) and the built-in camera QR code scanner. Real-time access decisions in milliseconds.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(239,68,68,0.12);">📊</div>
+        <h3>Access Logs & Audit Trail</h3>
+        <p>Every scan is logged with a timestamp, result, and reason. View recent attempts per-user or across your whole facility from the admin dashboard.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(16,185,129,0.12);">🗓️</div>
+        <h3>Class Scheduling</h3>
+        <p>Define class schedules with capacity limits. Enroll members into classes and track participation alongside their general access logs.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon" style="background:rgba(99,102,241,0.12);">🌍</div>
+        <h3>Multi-Language Support</h3>
+        <p>Built with Flask-Babel for full internationalization. Swap languages on the fly without restarting — ideal for bilingual or international venues.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="how-grid">
+
+      <div class="reveal">
+        <div class="section-badge">How it Works</div>
+        <h2 class="section-title">Simple. Fast. Reliable.</h2>
+        <p class="section-subtitle" style="margin-bottom:2.5rem;">The whole flow takes less than a second from card tap to access decision.</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Card is Scanned</h4>
+              <p>A member taps their RFID card on the reader or scans their QR code. The unique ID is sent to the server instantly.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Subscription is Checked</h4>
+              <p>The system looks up the user, verifies their active subscription, checks weekly session counts, and evaluates expiry dates.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Decision is Displayed</h4>
+              <p>The screen turns green (granted), red (denied), or amber (warning) with the member's name, plan, and relevant context.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h4>Attempt is Logged</h4>
+              <p>Every scan — whether granted or denied — is permanently recorded with a timestamp for audit and reporting purposes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard mockup -->
+      <div class="dashboard-mockup reveal float-anim" style="animation-delay:0.5s">
+        <div class="mockup-topbar">
+          <span class="mockup-dot" style="background:#ff5f57;"></span>
+          <span class="mockup-dot" style="background:#febc2e;"></span>
+          <span class="mockup-dot" style="background:#28c840;"></span>
+          <span>Access Control – Live View</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-scan-area">
+            <div class="mockup-scan-title">✅ ACCESS GRANTED</div>
+            <div class="mockup-scan-name">Maria Constantin</div>
+            <div class="mockup-scan-sub">🏷️ Unlimited · This week: 3 scans</div>
+          </div>
+          <div class="mockup-stats">
+            <div class="mockup-stat">
+              <div class="val" style="color:var(--emerald);">1,248</div>
+              <div class="lbl">Total Scans</div>
+            </div>
+            <div class="mockup-stat">
+              <div class="val">42</div>
+              <div class="lbl">Active Members</div>
+            </div>
+            <div class="mockup-stat">
+              <div class="val" style="color:var(--red);">7</div>
+              <div class="lbl">Denied Today</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── TECH STACK ── -->
+<section id="tech">
+  <div class="container">
+    <div class="tech-header reveal">
+      <div class="section-badge">Tech Stack</div>
+      <h2 class="section-title">Built on solid foundations</h2>
+      <p class="section-subtitle" style="margin:0 auto;">Minimal dependencies, maximum reliability. Runs on any machine with Python installed.</p>
+    </div>
+
+    <div class="tech-pills reveal">
+      <div class="tech-pill"><span class="dot" style="background:#3572A5;"></span> Python 3</div>
+      <div class="tech-pill"><span class="dot" style="background:#e36b6b;"></span> Flask</div>
+      <div class="tech-pill"><span class="dot" style="background:#4FC08D;"></span> SQLite 3</div>
+      <div class="tech-pill"><span class="dot" style="background:#38bdf8;"></span> Tailwind CSS</div>
+      <div class="tech-pill"><span class="dot" style="background:#f97316;"></span> Flask-Babel</div>
+      <div class="tech-pill"><span class="dot" style="background:#a78bfa;"></span> Flask-SQLAlchemy</div>
+      <div class="tech-pill"><span class="dot" style="background:#fb923c;"></span> html5-qrcode</div>
+      <div class="tech-pill"><span class="dot" style="background:#22c55e;"></span> PyWebView</div>
+      <div class="tech-pill"><span class="dot" style="background:#64748b;"></span> PyInstaller</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SETUP ── -->
+<section id="setup">
+  <div class="container">
+    <div class="setup-grid">
+      <div class="reveal">
+        <div class="section-badge">Quick Setup</div>
+        <h2 class="section-title">Running in under 2 minutes</h2>
+        <p class="section-subtitle" style="margin-bottom:2rem;">No Docker, no cloud accounts, no configuration headaches. Clone, install, run.</p>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:0.75rem;">
+          <li style="display:flex; gap:0.75rem; align-items:flex-start; font-size:0.9rem; color:var(--slate-400);">
+            <span style="color:var(--emerald); font-weight:700; flex-shrink:0;">✓</span>
+            The SQLite database is <strong style="color:var(--white);">auto-created</strong> on first launch — no setup needed
+          </li>
+          <li style="display:flex; gap:0.75rem; align-items:flex-start; font-size:0.9rem; color:var(--slate-400);">
+            <span style="color:var(--emerald); font-weight:700; flex-shrink:0;">✓</span>
+            Ships as a <strong style="color:var(--white);">cross-platform desktop app</strong> via PyWebView + PyInstaller
+          </li>
+          <li style="display:flex; gap:0.75rem; align-items:flex-start; font-size:0.9rem; color:var(--slate-400);">
+            <span style="color:var(--emerald); font-weight:700; flex-shrink:0;">✓</span>
+            Works on your local network — accessible from any device in the same venue
+          </li>
+          <li style="display:flex; gap:0.75rem; align-items:flex-start; font-size:0.9rem; color:var(--slate-400);">
+            <span style="color:var(--emerald); font-weight:700; flex-shrink:0;">✓</span>
+            Works with any standard <strong style="color:var(--white);">USB RFID reader</strong> (keyboard-emulation type)
+          </li>
+        </ul>
+      </div>
+
+      <div class="code-block reveal">
+        <div class="code-block-header">
+          <span>Terminal</span>
+          <span>bash</span>
+        </div>
+        <pre><span class="c-gray"># 1. Clone the repo</span>
+<span class="c-green">git</span> clone https://github.com/prundusdanielioan/accessControl.git
+<span class="c-blue">cd</span> accessControl
+
+<span class="c-gray"># 2. Create & activate venv</span>
+<span class="c-green">python3</span> -m venv venv
+<span class="c-blue">source</span> venv/bin/activate
+
+<span class="c-gray"># 3. Install dependencies</span>
+<span class="c-green">pip</span> install -r requirements.txt
+
+<span class="c-gray"># 4. Launch 🚀</span>
+<span class="c-green">python3</span> app.py</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta">
+  <div class="container">
+    <div class="section-badge reveal">Open Source</div>
+    <h2 class="section-title reveal">Ready to take control?</h2>
+    <p class="section-subtitle reveal">Self-hosted, free forever. No subscriptions, no cloud lock-in. Your data, your system.</p>
+    <br/>
+    <div class="cta-glow reveal">
+      <a href="https://github.com/prundusdanielioan/accessControl" target="_blank" class="btn-primary" style="font-size:1rem; padding:1rem 2.5rem;">
+        ⭐ Star on GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="logo">🔐 AccessControl</div>
+  <p>Built with Flask & ❤️ · Open Source</p>
+  <div class="footer-links">
+    <a href="https://github.com/prundusdanielioan/accessControl" target="_blank">GitHub</a>
+    <a href="#features">Features</a>
+    <a href="#setup">Setup</a>
+  </div>
+</footer>
+
+<script>
+  // ── Screenshot tabs ──
+  document.querySelectorAll('.screen-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.screen-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+
+  // ── Scroll reveal ──
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // ── Navbar shadow on scroll ──
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 30) {
+      nav.style.boxShadow = '0 4px 32px rgba(0,0,0,0.4)';
+    } else {
+      nav.style.boxShadow = 'none';
+    }
+  });
+
+  // ── Animated scan demo to cycle through states ──
+  const cards = document.querySelectorAll('.status-card');
+  let active = 0;
+  setInterval(() => {
+    cards.forEach(c => c.style.transform = '');
+    active = (active + 1) % cards.length;
+    cards[active].style.transform = 'scale(1.06)';
+  }, 2500);
+</script>
+</body>
+</html>
