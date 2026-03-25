@@ -216,7 +216,7 @@ def check_access(user_id):
     return True, _("Access Granted"), "allowed", sub_name, count
 
 def get_users_paginated(page=1, per_page=50, search_name=None, search_phone=None, search_sub_id=None, search_class_id=None):
-    query = db.session.query(User, ActiveSubscription.end_date, SubscriptionType.name.label('sub_name'), SubscriptionType.id.label('sub_type_id'))\
+    query = db.session.query(User, ActiveSubscription.start_date, ActiveSubscription.end_date, SubscriptionType.name.label('sub_name'), SubscriptionType.id.label('sub_type_id'))\
         .outerjoin(ActiveSubscription, (User.id == ActiveSubscription.user_id) & (ActiveSubscription.end_date >= datetime.date.today()))\
         .outerjoin(SubscriptionType, ActiveSubscription.type_id == SubscriptionType.id)
         
@@ -239,7 +239,7 @@ def get_users_paginated(page=1, per_page=50, search_name=None, search_phone=None
     paginated = query.paginate(page=page, per_page=per_page, error_out=False)
         
     users = []
-    for user, end_date, sub_name, sub_type_id in paginated.items:
+    for user, start_date, end_date, sub_name, sub_type_id in paginated.items:
         u_dict = dict_helper(user)
         
         user_classes = db.session.query(ClassSchedule.name)\
@@ -247,6 +247,11 @@ def get_users_paginated(page=1, per_page=50, search_name=None, search_phone=None
             .filter(ClassParticipant.user_id == user.id)\
             .all()
         class_names = [c[0] for c in user_classes]
+
+        if start_date and isinstance(start_date, datetime.date):
+            u_dict['start_date'] = start_date.strftime('%Y-%m-%d')
+        else:
+            u_dict['start_date'] = start_date
 
         if end_date and isinstance(end_date, datetime.date):
             u_dict['end_date'] = end_date.strftime('%Y-%m-%d')
