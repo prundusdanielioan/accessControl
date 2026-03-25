@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.exceptions import NotFound
 from flask_babel import Babel, _
 import database
 import datetime
@@ -23,6 +25,8 @@ db_path = os.path.join(db_dir, 'access_control.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Required for sessions
+app.config['APPLICATION_ROOT'] = '/demo'
+app.config['PREFERRED_URL_SCHEME'] = 'http'
 app.config['BABEL_DEFAULT_LOCALE'] = 'en'
 
 def get_locale():
@@ -235,20 +239,15 @@ def delete_class_schedule(class_id):
     database.delete_class_schedule(class_id)
     return redirect(url_for('admin'))
 
-import webview
-import threading
+# import webview  # Dezactivat - nu e necesar pe server web
+# import threading
 
-def start_server():
-    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
+# def start_server():
+#     app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
+
+# Mount the app under /demo
+app.wsgi_app = DispatcherMiddleware(NotFound(), {'/demo': app.wsgi_app})
 
 if __name__ == '__main__':
-    # Pornim serverul Flask pe un thread separat, la portul 5000
-    t = threading.Thread(target=start_server)
-    t.daemon = True
-    t.start()
-    
-    # Creăm fereastra aplicației conectată la server
-    webview.create_window('Access Control', 'http://127.0.0.1:5000', width=1200, height=800)
-    
-    # Pornim interfața desktop
-    webview.start()
+    # Server web - rulează direct Flask
+    app.run(host='0.0.0.0', port=5000, debug=False)
