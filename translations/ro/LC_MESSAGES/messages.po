@@ -1000,3 +1000,94 @@ msgstr[2] ""
 #~ msgstr ""
 #~ "Sunteți sigur că doriți să ștergeți utilizatorul? Această acțiune nu poate "
 #~ "fi anulată."
+
+# Reports page translations
+msgid "Reports"
+msgstr "Rapoarte"
+
+msgid "Business overview — subscriptions & classes"
+msgstr "Prezentare generală — abonamente & clase"
+
+msgid "Total Active Clients"
+msgstr "Total Clienți Activi"
+
+msgid "Subscription Revenue"
+msgstr "Venit Abonamente"
+
+msgid "Class Revenue"
+msgstr "Venit Clase"
+
+msgid "Total Active Revenue"
+msgstr "Venit Total Activ"
+
+msgid "Subscriptions"
+msgstr "Abonamente"
+
+msgid "Subscription"
+msgstr "Abonament"
+
+msgid "Active Clients"
+msgstr "Clienți Activi"
+
+msgid "Total Ever Registered"
+msgstr "Total Înregistrați Vreodată"
+
+msgid "Revenue (Active)"
+msgstr "Venit (Activi)"
+
+msgid "Totals"
+msgstr "Totaluri"
+
+msgid "No subscription types defined yet."
+msgstr "Niciun tip de abonament definit."
+
+msgid "Classes"
+msgstr "Clase"
+
+msgid "Day"
+msgstr "Zi"
+
+msgid "Enrolled"
+msgstr "Înscriși"
+
+msgid "Fill"
+msgstr "Ocupare"
+
+msgid "Revenue"
+msgstr "Venit"
+
+msgid "No limit"
+msgstr "Fără limită"
+
+msgid "Total Class Revenue"
+msgstr "Venit Total Clase"
+
+msgid "No classes defined yet."
+msgstr "Nicio clasă definită."
+
+msgid "Save Changes"
+msgstr "Salvează Modificările"
+
+msgid "Monday"
+msgstr "Luni"
+
+msgid "Tuesday"
+msgstr "Marți"
+
+msgid "Wednesday"
+msgstr "Miercuri"
+
+msgid "Thursday"
+msgstr "Joi"
+
+msgid "Friday"
+msgstr "Vineri"
+
+msgid "Saturday"
+msgstr "Sâmbătă"
+
+msgid "Sunday"
+msgstr "Duminică"
+
+msgid "Price (RON)"
+msgstr "Preț (RON)"

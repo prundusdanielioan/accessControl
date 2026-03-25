@@ -3,12 +3,12 @@
 
 <!-- Page Header -->
 <div class="mb-8">
-    <h1 class="text-3xl font-extrabold text-white">📊 Reports</h1>
-    <p class="text-slate-400 mt-1">Business overview — subscriptions & classes</p>
+    <h1 class="text-3xl font-extrabold text-white">📊 {{ _('Reports') }}</h1>
+    <p class="text-slate-400 mt-1">{{ _('Business overview — subscriptions & classes') }}</p>
 </div>
 
 <!-- Summary Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
     <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 flex items-center gap-4">
         <div class="bg-emerald-500/20 rounded-xl p-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -16,21 +16,38 @@
             </svg>
         </div>
         <div>
-            <p class="text-slate-400 text-sm">Total Active Clients</p>
+            <p class="text-slate-400 text-sm">{{ _('Total Active Clients') }}</p>
             <p class="text-3xl font-bold text-white">{{ total_active_clients }}</p>
         </div>
     </div>
     <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 flex items-center gap-4">
         <div class="bg-yellow-500/20 rounded-xl p-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3M20 12c0 4.418-3.582 8-8 8S4 16.418 4 12 7.582 4 12 4s8 3.582 8 8z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
         </div>
         <div>
-            <p class="text-slate-400 text-sm">Total Active Revenue</p>
-            <p class="text-3xl font-bold text-yellow-400">{{ total_active_revenue }} <span class="text-lg font-normal text-slate-400">RON</span></p>
+            <p class="text-slate-400 text-sm">{{ _('Subscription Revenue') }}</p>
+            <p class="text-3xl font-bold text-yellow-400">{{ total_sub_revenue }} <span class="text-lg font-normal text-slate-400">RON</span></p>
         </div>
     </div>
+    <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 flex items-center gap-4">
+        <div class="bg-blue-500/20 rounded-xl p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3M16 7V3M4 11h16M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-slate-400 text-sm">{{ _('Class Revenue') }}</p>
+            <p class="text-3xl font-bold text-blue-400">{{ total_class_revenue }} <span class="text-lg font-normal text-slate-400">RON</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Total Revenue Banner -->
+<div class="bg-gradient-to-r from-emerald-900/40 to-yellow-900/40 border border-emerald-700/40 rounded-2xl p-5 mb-10 flex items-center justify-between">
+    <span class="text-slate-300 font-semibold text-lg">💰 {{ _('Total Active Revenue') }}</span>
+    <span class="text-3xl font-extrabold text-yellow-400">{{ total_active_revenue }} <span class="text-lg font-normal text-slate-400">RON</span></span>
 </div>
 
 <!-- Subscriptions Section -->
@@ -39,7 +56,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
         </svg>
-        Subscriptions
+        {{ _('Subscriptions') }}
     </h2>
 
     {% if subscription_stats %}
@@ -47,11 +64,11 @@
         <table class="w-full text-sm">
             <thead class="bg-slate-700/60 text-slate-300 uppercase text-xs tracking-wider">
                 <tr>
-                    <th class="px-6 py-4 text-left">Subscription</th>
-                    <th class="px-6 py-4 text-center">Price</th>
-                    <th class="px-6 py-4 text-center">Active Clients</th>
-                    <th class="px-6 py-4 text-center">Total Ever Registered</th>
-                    <th class="px-6 py-4 text-right">Revenue (Active)</th>
+                    <th class="px-6 py-4 text-left">{{ _('Subscription') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Price') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Active Clients') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Total Ever Registered') }}</th>
+                    <th class="px-6 py-4 text-right">{{ _('Revenue (Active)') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-700">
@@ -75,17 +92,17 @@
             </tbody>
             <tfoot class="bg-slate-700/40 text-slate-300 font-semibold">
                 <tr>
-                    <td class="px-6 py-3 text-slate-400" colspan="2">Totals</td>
-                    <td class="px-6 py-3 text-center text-emerald-400">{{ total_active_clients }}</td>
+                    <td class="px-6 py-3 text-slate-400" colspan="2">{{ _('Totals') }}</td>
+                    <td class="px-6 py-3 text-center text-emerald-400">{{ subscription_stats | sum(attribute='active_clients') }}</td>
                     <td class="px-6 py-3 text-center">{{ subscription_stats | sum(attribute='total_registered') }}</td>
-                    <td class="px-6 py-3 text-right text-yellow-400">{{ total_active_revenue }} RON</td>
+                    <td class="px-6 py-3 text-right text-yellow-400">{{ total_sub_revenue }} RON</td>
                 </tr>
             </tfoot>
         </table>
     </div>
     {% else %}
     <div class="bg-slate-800 rounded-2xl border border-slate-700 p-8 text-center text-slate-400">
-        No subscription types defined yet.
+        {{ _('No subscription types defined yet.') }}
     </div>
     {% endif %}
 </div>
@@ -96,7 +113,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3M16 7V3M4 11h16M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
         </svg>
-        Classes
+        {{ _('Classes') }}
     </h2>
 
     {% if class_stats %}
@@ -104,20 +121,23 @@
         <table class="w-full text-sm">
             <thead class="bg-slate-700/60 text-slate-300 uppercase text-xs tracking-wider">
                 <tr>
-                    <th class="px-6 py-4 text-left">Class</th>
-                    <th class="px-6 py-4 text-center">Day</th>
-                    <th class="px-6 py-4 text-center">Time</th>
-                    <th class="px-6 py-4 text-center">Enrolled</th>
-                    <th class="px-6 py-4 text-center">Capacity</th>
-                    <th class="px-6 py-4 text-center">Fill %</th>
+                    <th class="px-6 py-4 text-left">{{ _('Class') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Day') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Time') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Price') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Enrolled') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Capacity') }}</th>
+                    <th class="px-6 py-4 text-center">{{ _('Fill') }} %</th>
+                    <th class="px-6 py-4 text-right">{{ _('Revenue') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-700">
                 {% for c in class_stats %}
                 <tr class="hover:bg-slate-700/40 transition">
                     <td class="px-6 py-4 font-semibold text-white">{{ c.name }}</td>
-                    <td class="px-6 py-4 text-center text-slate-300">{{ c.day }}</td>
+                    <td class="px-6 py-4 text-center text-slate-300">{{ _(c.day) }}</td>
                     <td class="px-6 py-4 text-center text-slate-300">{{ c.time }}</td>
+                    <td class="px-6 py-4 text-center text-slate-300">{{ c.price }} RON</td>
                     <td class="px-6 py-4 text-center">
                         <span class="inline-flex items-center justify-center bg-blue-500/20 text-blue-400 font-bold rounded-full px-3 py-0.5 text-sm">
                             {{ c.enrolled }}
@@ -136,17 +156,24 @@
                                 <span class="inline-block bg-emerald-500/20 text-emerald-400 font-bold rounded-full px-3 py-0.5 text-sm">{{ c.fill_pct }}%</span>
                             {% endif %}
                         {% else %}
-                            <span class="text-slate-500 text-sm">No limit</span>
+                            <span class="text-slate-500 text-sm">{{ _('No limit') }}</span>
                         {% endif %}
                     </td>
+                    <td class="px-6 py-4 text-right font-bold text-blue-400">{{ c.revenue }} RON</td>
                 </tr>
                 {% endfor %}
             </tbody>
+            <tfoot class="bg-slate-700/40 text-slate-300 font-semibold">
+                <tr>
+                    <td class="px-6 py-3 text-slate-400" colspan="7">{{ _('Total Class Revenue') }}</td>
+                    <td class="px-6 py-3 text-right text-blue-400">{{ total_class_revenue }} RON</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
     {% else %}
     <div class="bg-slate-800 rounded-2xl border border-slate-700 p-8 text-center text-slate-400">
-        No classes defined yet.
+        {{ _('No classes defined yet.') }}
     </div>
     {% endif %}
 </div>

@@ -43,6 +43,7 @@ class ClassSchedule(db.Model):
     day_of_week = db.Column(db.Integer, nullable=False) # 0=Monday, 6=Sunday
     start_time = db.Column(db.String(5), nullable=False) # Format: HH:MM
     capacity = db.Column(db.Integer)
+    price = db.Column(db.Float, nullable=False, default=0.0)
 
 class ClassParticipant(db.Model):
     __tablename__ = 'class_participants'
@@ -384,7 +385,7 @@ def delete_subscription_type(type_id):
         db.session.rollback()
         return False, _("Error deleting subscription type.")
 
-def create_class_schedule(name, day_of_week, start_time, capacity):
+def create_class_schedule(name, day_of_week, start_time, capacity, price=0.0):
     try:
         # Validate time format loosely
         if ':' not in start_time or len(start_time) > 5:
@@ -396,13 +397,47 @@ def create_class_schedule(name, day_of_week, start_time, capacity):
             name=name,
             day_of_week=int(day_of_week),
             start_time=start_time,
-            capacity=cap
+            capacity=cap,
+            price=float(price) if price else 0.0
         )
         db.session.add(new_class)
         db.session.commit()
         return True
     except Exception as e:
         print(f"Error creating class schedule: {e}")
+        db.session.rollback()
+        return False
+
+def update_subscription_type(type_id, name, entries_per_week, duration_days, price):
+    try:
+        st = SubscriptionType.query.get(type_id)
+        if st:
+            st.name = name
+            st.entries_per_week = int(entries_per_week) if entries_per_week else None
+            st.duration_days = int(duration_days)
+            st.price = float(price)
+            db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error updating subscription type: {e}")
+        db.session.rollback()
+        return False
+
+def update_class_schedule(class_id, name, day_of_week, start_time, capacity, price):
+    try:
+        if ':' not in start_time or len(start_time) > 5:
+            start_time = "00:00"
+        c = ClassSchedule.query.get(class_id)
+        if c:
+            c.name = name
+            c.day_of_week = int(day_of_week)
+            c.start_time = start_time
+            c.capacity = int(capacity) if capacity else None
+            c.price = float(price) if price else 0.0
+            db.session.commit()
+        return True
+    except Exception as e:
+        print(f"Error updating class schedule: {e}")
         db.session.rollback()
         return False
 
@@ -459,6 +494,8 @@ def get_report_stats():
         pct = round((enrolled / cap * 100)) if cap > 0 else 0
         time_str = c.start_time.strftime('%H:%M') if hasattr(c.start_time, 'strftime') else str(c.start_time)
         day_name = days_map[c.day_of_week] if 0 <= c.day_of_week <= 6 else str(c.day_of_week)
+        price = c.price if c.price else 0.0
+        revenue = round(enrolled * price, 2)
 
         class_stats.append({
             'name': c.name,
@@ -467,6 +504,8 @@ def get_report_stats():
             'enrolled': enrolled,
             'capacity': cap,
             'fill_pct': pct,
+            'price': price,
+            'revenue': revenue,
         })
 
     # Unique clients = users with active subscription UNION users enrolled in any class
@@ -479,10 +518,15 @@ def get_report_stats():
     )
     total_unique_active = len(active_sub_user_ids | class_user_ids)
 
+    total_class_revenue = round(sum(c['revenue'] for c in class_stats), 2)
+    total_sub_revenue = round(sum(s['revenue_active'] for s in subscription_stats), 2)
+
     return {
         'subscription_stats': subscription_stats,
         'class_stats': class_stats,
-        'total_active_revenue': round(sum(s['revenue_active'] for s in subscription_stats), 2),
+        'total_active_revenue': round(total_sub_revenue + total_class_revenue, 2),
+        'total_sub_revenue': total_sub_revenue,
+        'total_class_revenue': total_class_revenue,
         'total_active_clients': total_unique_active,
     }
 

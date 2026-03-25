@@ -226,13 +226,33 @@ def create_class_schedule():
     day_of_week = request.form.get('day_of_week')
     start_time = request.form.get('start_time')
     capacity = request.form.get('capacity')
+    price = request.form.get('price', 0.0)
     
-    database.create_class_schedule(name, day_of_week, start_time, capacity)
+    database.create_class_schedule(name, day_of_week, start_time, capacity, price)
     return redirect(url_for('admin'))
 
 @app.route('/admin/classes/<int:class_id>/delete', methods=['POST'])
 def delete_class_schedule(class_id):
     database.delete_class_schedule(class_id)
+    return redirect(url_for('admin'))
+
+@app.route('/admin/subscription_types/<int:type_id>/edit', methods=['POST'])
+def edit_subscription_type(type_id):
+    name = request.form.get('name')
+    entries_per_week = request.form.get('entries_per_week')
+    duration_days = request.form.get('duration_days')
+    price = request.form.get('price')
+    database.update_subscription_type(type_id, name, entries_per_week, duration_days, price)
+    return redirect(url_for('admin'))
+
+@app.route('/admin/classes/<int:class_id>/edit', methods=['POST'])
+def edit_class_schedule(class_id):
+    name = request.form.get('name')
+    day_of_week = request.form.get('day_of_week')
+    start_time = request.form.get('start_time')
+    capacity = request.form.get('capacity')
+    price = request.form.get('price', 0.0)
+    database.update_class_schedule(class_id, name, day_of_week, start_time, capacity, price)
     return redirect(url_for('admin'))
 
 # import webview  # Dezactivat - nu e necesar pe server web
