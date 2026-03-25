@@ -241,6 +241,11 @@ def delete_class_schedule(class_id):
 # def start_server():
 #     app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
 
+@app.route('/reports')
+def reports():
+    stats = database.get_report_stats()
+    return render_template('reports.html', **stats)
+
 if __name__ == '__main__':
     # Server web - rulează direct Flask
     app.run(host='0.0.0.0', port=5000, debug=False)

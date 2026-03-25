@@ -1,0 +1,154 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- Page Header -->
+<div class="mb-8">
+    <h1 class="text-3xl font-extrabold text-white">📊 Reports</h1>
+    <p class="text-slate-400 mt-1">Business overview — subscriptions & classes</p>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+    <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 flex items-center gap-4">
+        <div class="bg-emerald-500/20 rounded-xl p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2h5M12 12a4 4 0 100-8 4 4 0 000 8z"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-slate-400 text-sm">Total Active Clients</p>
+            <p class="text-3xl font-bold text-white">{{ total_active_clients }}</p>
+        </div>
+    </div>
+    <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 flex items-center gap-4">
+        <div class="bg-yellow-500/20 rounded-xl p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3M20 12c0 4.418-3.582 8-8 8S4 16.418 4 12 7.582 4 12 4s8 3.582 8 8z"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-slate-400 text-sm">Total Active Revenue</p>
+            <p class="text-3xl font-bold text-yellow-400">{{ total_active_revenue }} <span class="text-lg font-normal text-slate-400">RON</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Subscriptions Section -->
+<div class="mb-10">
+    <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        Subscriptions
+    </h2>
+
+    {% if subscription_stats %}
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-700/60 text-slate-300 uppercase text-xs tracking-wider">
+                <tr>
+                    <th class="px-6 py-4 text-left">Subscription</th>
+                    <th class="px-6 py-4 text-center">Price</th>
+                    <th class="px-6 py-4 text-center">Active Clients</th>
+                    <th class="px-6 py-4 text-center">Total Ever Registered</th>
+                    <th class="px-6 py-4 text-right">Revenue (Active)</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for s in subscription_stats %}
+                <tr class="hover:bg-slate-700/40 transition">
+                    <td class="px-6 py-4 font-semibold text-white">{{ s.name }}</td>
+                    <td class="px-6 py-4 text-center text-slate-300">{{ s.price }} RON</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-flex items-center justify-center bg-emerald-500/20 text-emerald-400 font-bold rounded-full px-3 py-0.5 text-sm">
+                            {{ s.active_clients }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-flex items-center justify-center bg-slate-600 text-slate-300 font-semibold rounded-full px-3 py-0.5 text-sm">
+                            {{ s.total_registered }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right font-bold text-yellow-400">{{ s.revenue_active }} RON</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="bg-slate-700/40 text-slate-300 font-semibold">
+                <tr>
+                    <td class="px-6 py-3 text-slate-400" colspan="2">Totals</td>
+                    <td class="px-6 py-3 text-center text-emerald-400">{{ total_active_clients }}</td>
+                    <td class="px-6 py-3 text-center">{{ subscription_stats | sum(attribute='total_registered') }}</td>
+                    <td class="px-6 py-3 text-right text-yellow-400">{{ total_active_revenue }} RON</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {% else %}
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-8 text-center text-slate-400">
+        No subscription types defined yet.
+    </div>
+    {% endif %}
+</div>
+
+<!-- Classes Section -->
+<div>
+    <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3M16 7V3M4 11h16M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        Classes
+    </h2>
+
+    {% if class_stats %}
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-700/60 text-slate-300 uppercase text-xs tracking-wider">
+                <tr>
+                    <th class="px-6 py-4 text-left">Class</th>
+                    <th class="px-6 py-4 text-center">Day</th>
+                    <th class="px-6 py-4 text-center">Time</th>
+                    <th class="px-6 py-4 text-center">Enrolled</th>
+                    <th class="px-6 py-4 text-center">Capacity</th>
+                    <th class="px-6 py-4 text-center">Fill %</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for c in class_stats %}
+                <tr class="hover:bg-slate-700/40 transition">
+                    <td class="px-6 py-4 font-semibold text-white">{{ c.name }}</td>
+                    <td class="px-6 py-4 text-center text-slate-300">{{ c.day }}</td>
+                    <td class="px-6 py-4 text-center text-slate-300">{{ c.time }}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-flex items-center justify-center bg-blue-500/20 text-blue-400 font-bold rounded-full px-3 py-0.5 text-sm">
+                            {{ c.enrolled }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center text-slate-300">
+                        {% if c.capacity > 0 %}{{ c.capacity }}{% else %}<span class="text-slate-500">—</span>{% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        {% if c.capacity > 0 %}
+                            {% if c.fill_pct >= 90 %}
+                                <span class="inline-block bg-red-500/20 text-red-400 font-bold rounded-full px-3 py-0.5 text-sm">{{ c.fill_pct }}%</span>
+                            {% elif c.fill_pct >= 60 %}
+                                <span class="inline-block bg-yellow-500/20 text-yellow-400 font-bold rounded-full px-3 py-0.5 text-sm">{{ c.fill_pct }}%</span>
+                            {% else %}
+                                <span class="inline-block bg-emerald-500/20 text-emerald-400 font-bold rounded-full px-3 py-0.5 text-sm">{{ c.fill_pct }}%</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-slate-500 text-sm">No limit</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-8 text-center text-slate-400">
+        No classes defined yet.
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

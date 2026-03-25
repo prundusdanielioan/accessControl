@@ -420,6 +420,72 @@ def delete_class_schedule(class_id):
         db.session.rollback()
         return False
 
+def get_report_stats():
+    today = datetime.date.today()
+    days_map = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    # --- Subscription stats ---
+    sub_types = SubscriptionType.query.all()
+    subscription_stats = []
+    for st in sub_types:
+        active_count = db.session.query(db.func.count(ActiveSubscription.id))\
+            .filter(ActiveSubscription.type_id == st.id)\
+            .filter(ActiveSubscription.end_date >= today)\
+            .scalar() or 0
+
+        total_registered = db.session.query(db.func.count(ActiveSubscription.id))\
+            .filter(ActiveSubscription.type_id == st.id)\
+            .scalar() or 0
+
+        revenue_active = round(active_count * st.price, 2)
+
+        subscription_stats.append({
+            'name': st.name,
+            'price': st.price,
+            'active_clients': active_count,
+            'total_registered': total_registered,
+            'revenue_active': revenue_active,
+        })
+
+    # --- Class stats ---
+    classes = ClassSchedule.query.order_by(ClassSchedule.day_of_week, ClassSchedule.start_time).all()
+    class_stats = []
+    for c in classes:
+        enrolled = db.session.query(db.func.count(ClassParticipant.id))\
+            .filter(ClassParticipant.class_id == c.id)\
+            .scalar() or 0
+
+        cap = c.capacity if c.capacity else 0
+        pct = round((enrolled / cap * 100)) if cap > 0 else 0
+        time_str = c.start_time.strftime('%H:%M') if hasattr(c.start_time, 'strftime') else str(c.start_time)
+        day_name = days_map[c.day_of_week] if 0 <= c.day_of_week <= 6 else str(c.day_of_week)
+
+        class_stats.append({
+            'name': c.name,
+            'day': day_name,
+            'time': time_str,
+            'enrolled': enrolled,
+            'capacity': cap,
+            'fill_pct': pct,
+        })
+
+    # Unique clients = users with active subscription UNION users enrolled in any class
+    active_sub_user_ids = set(
+        row[0] for row in db.session.query(ActiveSubscription.user_id)
+        .filter(ActiveSubscription.end_date >= today).all()
+    )
+    class_user_ids = set(
+        row[0] for row in db.session.query(ClassParticipant.user_id).all()
+    )
+    total_unique_active = len(active_sub_user_ids | class_user_ids)
+
+    return {
+        'subscription_stats': subscription_stats,
+        'class_stats': class_stats,
+        'total_active_revenue': round(sum(s['revenue_active'] for s in subscription_stats), 2),
+        'total_active_clients': total_unique_active,
+    }
+
 def get_subscription_stats():
     stats = []
     sub_types = SubscriptionType.query.all()
