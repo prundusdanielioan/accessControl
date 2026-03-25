@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
-from werkzeug.exceptions import NotFound
 from flask_babel import Babel, _
 import database
 import datetime
@@ -25,8 +23,6 @@ db_path = os.path.join(db_dir, 'access_control.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Required for sessions
-app.config['APPLICATION_ROOT'] = '/demo'
-app.config['PREFERRED_URL_SCHEME'] = 'http'
 app.config['BABEL_DEFAULT_LOCALE'] = 'en'
 
 def get_locale():
@@ -244,9 +240,6 @@ def delete_class_schedule(class_id):
 
 # def start_server():
 #     app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
-
-# Mount the app under /demo
-app.wsgi_app = DispatcherMiddleware(NotFound(), {'/demo': app.wsgi_app})
 
 if __name__ == '__main__':
     # Server web - rulează direct Flask
