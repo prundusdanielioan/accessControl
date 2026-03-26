@@ -1,0 +1,5 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/prundusa/gym.self-learn.ro/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R app.py database.py requirements.txt passenger_wsgi.py static templates translations instance $DEPLOYPATH
