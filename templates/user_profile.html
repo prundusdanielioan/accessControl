@@ -58,6 +58,9 @@
                             class="bg-indigo-900/50 text-indigo-400 border border-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
                             {{ c['name'] }} ({{ days[c['day_of_week']] }} {{ c['start_time'][:5] if c['start_time'] is
                             string else c['start_time'] }})
+                            {% if c['end_date'] %}
+                            <span class="text-indigo-300 font-normal ml-1">| {{ _('Expires:') }} {{ c['end_date'] }}</span>
+                            {% endif %}
                         </span>
                         {% endfor %}
                     </div>

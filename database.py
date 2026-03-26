@@ -51,6 +51,7 @@ class ClassParticipant(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     class_id = db.Column(db.Integer, db.ForeignKey('class_schedules.id'), nullable=False)
     enrolled_at = db.Column(db.DateTime, default=datetime.datetime.now)
+    end_date = db.Column(db.Date, nullable=True)
 
 def init_db(app):
     with app.app_context():
@@ -107,7 +108,7 @@ def assign_subscription(user_id, type_id):
     db.session.commit()
     return True
 
-def enroll_user_in_class(user_id, class_id):
+def enroll_user_in_class(user_id, class_id, duration_days=None):
     try:
         if not class_id:
             return False
@@ -115,9 +116,16 @@ def enroll_user_in_class(user_id, class_id):
         # Check if already enrolled
         existing = ClassParticipant.query.filter_by(user_id=user_id, class_id=class_id).first()
         if existing:
+            if duration_days:
+                existing.end_date = datetime.date.today() + datetime.timedelta(days=int(duration_days))
+                db.session.commit()
             return True
             
-        participant = ClassParticipant(user_id=user_id, class_id=class_id)
+        end_date = None
+        if duration_days:
+            end_date = datetime.date.today() + datetime.timedelta(days=int(duration_days))
+            
+        participant = ClassParticipant(user_id=user_id, class_id=class_id, end_date=end_date)
         db.session.add(participant)
         db.session.commit()
         return True
@@ -151,10 +159,11 @@ def check_access(user_id):
         .count()
 
     if not subscription_data:
-        # Check all enrolled classes for this user
+        # Check all enrolled classes for this user that haven't expired
         all_enrolled = db.session.query(ClassSchedule)\
             .join(ClassParticipant, ClassParticipant.class_id == ClassSchedule.id)\
             .filter(ClassParticipant.user_id == user_id)\
+            .filter(db.or_(ClassParticipant.end_date >= today, ClassParticipant.end_date == None))\
             .all()
             
         if not all_enrolled:
@@ -198,6 +207,7 @@ def check_access(user_id):
     user_classes = db.session.query(ClassSchedule.name)\
         .join(ClassParticipant, ClassParticipant.class_id == ClassSchedule.id)\
         .filter(ClassParticipant.user_id == user_id)\
+        .filter(db.or_(ClassParticipant.end_date >= today, ClassParticipant.end_date == None))\
         .all()
     class_names = [c[0] for c in user_classes]
     

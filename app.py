@@ -85,6 +85,7 @@ def register():
         rfid_tag = request.form['rfid_tag']
         sub_type_id = request.form.get('subscription_type')
         class_id = request.form.get('class_id')
+        class_duration = request.form.get('class_duration')
         
         # Check if user exists
         existing_user = database.get_user_by_rfid(rfid_tag)
@@ -96,7 +97,7 @@ def register():
             if sub_type_id:
                 database.assign_subscription(user_id, sub_type_id)
             if class_id:
-                database.enroll_user_in_class(user_id, class_id)
+                database.enroll_user_in_class(user_id, class_id, class_duration)
             return redirect(url_for('index'))
         else:
              return render_template('register.html', error="Error creating user (Phone might use used).")
@@ -141,11 +142,16 @@ def user_profile(user_id):
     logs = database.get_user_logs(user_id, limit=50)
     
     # Also fetch enrolled classes manually here for display
-    user_classes = database.db.session.query(database.ClassSchedule)\
+    user_classes = database.db.session.query(database.ClassSchedule, database.ClassParticipant.end_date)\
         .join(database.ClassParticipant, database.ClassParticipant.class_id == database.ClassSchedule.id)\
         .filter(database.ClassParticipant.user_id == user_id)\
         .all()
-    classes = [database.dict_helper(c) for c in user_classes]
+    
+    classes = []
+    for c, c_end in user_classes:
+        cdict = database.dict_helper(c)
+        cdict['end_date'] = c_end.strftime('%Y-%m-%d') if c_end else None
+        classes.append(cdict)
     
     return render_template('user_profile.html', user=user, sub=sub, stats=stats, logs=logs, classes=classes)
 

@@ -1091,3 +1091,19 @@ msgstr "Duminică"
 
 msgid "Price (RON)"
 msgstr "Preț (RON)"
+
+msgid "Lifetime"
+msgstr "Nelimitat"
+
+msgid "Month"
+msgstr "Lună"
+
+msgid "Months"
+msgstr "Luni"
+
+msgid "Year"
+msgstr "An"
+
+msgid "Duration"
+msgstr "Durată"
+
