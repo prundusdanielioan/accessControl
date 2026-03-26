@@ -135,7 +135,7 @@ def get_users_route():
 def user_profile(user_id):
     user = database.get_user_by_id(user_id)
     if not user:
-        return redirect(url_for('get_users'))
+        return redirect(url_for('get_users_route'))
         
     sub = database.get_active_subscription(user_id)
     stats = database.get_user_stats(user_id)
@@ -166,7 +166,7 @@ def edit_user(user_id):
              phone = request.form['phone']
              rfid = request.form['rfid_tag']
              database.update_user(user_id, name, phone, rfid)
-        return redirect(url_for('get_users'))
+        return redirect(url_for('get_users_route'))
 
     user = database.get_user_by_id(user_id)
     sub = database.get_active_subscription(user_id)
@@ -175,7 +175,7 @@ def edit_user(user_id):
 @app.route('/user/<int:user_id>/delete', methods=['POST'])
 def delete_user(user_id):
     database.delete_user(user_id)
-    return redirect(url_for('get_users'))
+    return redirect(url_for('get_users_route'))
 
 @app.route('/log/<int:log_id>/delete', methods=['POST'])
 def delete_user_log(log_id):
